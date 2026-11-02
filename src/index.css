@@ -1,0 +1,78 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-editorial: "Fraunces", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-linen-50: #FAF7F2;
+  --color-linen-100: #F4EFEA;
+  --color-linen-200: #EDE7DF;
+  --color-linen-300: #E2DBD2;
+  --color-linen-border: #D6CFC7;
+
+  --color-espresso-950: #121110;
+  --color-espresso-900: #161514;
+  --color-espresso-850: #1A1816;
+  --color-espresso-800: #1E1C1A;
+  --color-espresso-border: #2E2B28;
+  --color-espresso-muted: #7A7570;
+  --color-espresso-subtle: #3A3632;
+}
+
+::selection {
+  background: #1A1816;
+  color: #FAF7F2;
+}
+
+.dark ::selection {
+  background: #EDEDEC;
+  color: #161514;
+}
+
+.technical-grid {
+  background-size: 24px 24px;
+  background-image:
+    linear-gradient(to right, rgba(26, 24, 22, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(26, 24, 22, 0.04) 1px, transparent 1px);
+}
+
+.dark .technical-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+.wire-line {
+  stroke-dasharray: 4, 4;
+  animation: dash 14s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -48;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wire-line,
+  .animate-fade-up {
+    animation: none;
+  }
+}

@@ -1,0 +1,1508 @@
+<!DOCTYPE html><html lang="en" class="scroll-smooth dark"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARJUN — Systems &amp; Full Stack Engineer</title>
+  <!-- Tailwind Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Space Grotesk, Newsreader / Playfair for editorial, JetBrains Mono for technical codes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            editorial: ['"Instrument Serif"', 'Georgia', 'serif'],
+            sans: ['"Inter"', 'sans-serif'],
+          },
+          colors: {
+            linen: {
+              50: '#FAF7F2',
+              100: '#F4EFEA',
+              200: '#EDE7DF',
+              300: '#E2DBD2',
+              border: '#D6CFC7',
+            },
+            espresso: {
+              950: '#121110',
+              900: '#161514',
+              850: '#1A1816',
+              800: '#1E1C1A',
+              border: '#2E2B28',
+              muted: '#7A7570',
+              subtle: '#3A3632',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Smooth scroll and selection */
+    ::selection {
+      background: #1A1816;
+      color: #FAF7F2;
+    }
+    .dark ::selection {
+      background: #EDEDEC;
+      color: #161514;
+    }
+
+    /* Tactile Rocker Switch Styles */
+    .rocker-switch {
+      position: relative;
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 9999px;
+      user-select: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .technical-grid {
+      background-size: 24px 24px;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+    }
+    .dark .technical-grid {
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+
+    /* Architectural diagram node line styling */
+    .wire-line {
+      stroke-dasharray: 4, 4;
+      animation: dash 12s linear infinite;
+    }
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -40;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-linen-100 text-espresso-850 dark:bg-espresso-900 dark:text-[#EDEDEC] antialiased selection:bg-espresso-850 selection:text-linen-100 transition-colors duration-300 font-sans min-h-screen">
+
+  <!-- ========================================================
+       TOP-RIGHT FIXED TACTILE ROCKER SWITCH (LIGHT / DARK)
+       ======================================================== -->
+  <div class="fixed top-5 right-6 z-50 flex items-center gap-3">
+    <!-- Status indicator badge -->
+    <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 text-[11px] font-mono tracking-wider uppercase rounded-full border border-linen-border/70 dark:border-espresso-border bg-linen-50/80 dark:bg-espresso-850/80 backdrop-blur-md shadow-xs">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span class="text-espresso-850/80 dark:text-[#EDEDEC]/80">SYS.ONLINE</span>
+    </div>
+
+    <!-- Tactile Physical-style Rocker Switch -->
+    <div class="rocker-switch bg-linen-200/90 dark:bg-espresso-800 border border-linen-border dark:border-espresso-border shadow-inner p-1 flex items-center backdrop-blur-md" role="region" aria-label="Theme selector"><button id="theme-light-btn" onclick="setTheme('light')" class="px-2.5 py-1 text-[11px] font-mono font-medium rounded-full transition-all duration-200 flex items-center gap-1.5 shadow-xs bg-espresso-850 text-linen-100 dark:bg-transparent dark:text-[#8E8A85] dark:shadow-none hover:text-espresso-850 dark:hover:text-[#EDEDEC]" title="Switch to Light Linen Mode">
+        <span class="text-[10px]">☀️</span>
+        <span class="">LINEN</span>
+      </button>
+      <button id="theme-dark-btn" onclick="setTheme('dark')" class="px-2.5 py-1 text-[11px] font-mono font-medium rounded-full transition-all duration-200 flex items-center gap-1.5 text-espresso-muted dark:bg-linen-200 dark:text-espresso-900 dark:shadow-xs hover:text-espresso-850 dark:hover:text-[#EDEDEC]" title="Switch to Dark Espresso Mode">
+        <span class="text-[10px]">🌙</span>
+        <span class="">ESPRESSO</span>
+      </button></div>
+  </div>
+
+  <!-- ========================================================
+       MOBILE TOP NAVIGATION BAR (< 768px)
+       ======================================================== -->
+  <header class="md:hidden sticky top-0 z-40 w-full bg-linen-100/95 dark:bg-espresso-900/95 backdrop-blur-md border-b border-linen-border dark:border-espresso-border px-5 py-3.5 flex items-center justify-between">
+    <a href="#home" class="flex items-center gap-2 group">
+      <span class="font-mono text-xs tracking-widest text-espresso-muted dark:text-espresso-muted">00//</span>
+      <span class="font-editorial text-2xl tracking-wider font-bold group-hover:opacity-80 transition-opacity">ARJUN</span>
+    </a>
+    
+    <div class="flex items-center gap-3">
+      <!-- Hamburger Toggle -->
+      <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border rounded hover:bg-linen-200 dark:hover:bg-espresso-800 transition" aria-label="Toggle navigation drawer">
+        <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg id="close-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu Overlay -->
+  <div id="mobile-drawer" class="fixed inset-0 z-30 bg-espresso-950/40 backdrop-blur-sm hidden md:hidden transition-opacity duration-300" onclick="toggleMobileMenu()">
+    <div class="absolute top-14 left-0 right-0 bg-linen-100 dark:bg-espresso-900 border-b border-linen-border dark:border-espresso-border p-6 shadow-xl space-y-4" onclick="event.stopPropagation()">
+      <div class="text-[11px] font-mono tracking-widest text-espresso-muted uppercase mb-2">DIRECTORY NAVIGATION</div>
+      <nav class="flex flex-col space-y-2 font-mono text-sm">
+        <a href="#home" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2 border-b border-linen-border/40 dark:border-espresso-border/40 hover:text-espresso-950 dark:hover:text-white">
+          <span class="">01 // HOME</span>
+          <span class="text-xs text-espresso-muted">ROOT</span>
+        </a>
+        <a href="#about" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2 border-b border-linen-border/40 dark:border-espresso-border/40 hover:text-espresso-950 dark:hover:text-white">
+          <span class="">02 // ABOUT</span>
+          <span class="text-xs text-espresso-muted">BIO &amp; SPEC</span>
+        </a>
+        <a href="#experience" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2 border-b border-linen-border/40 dark:border-espresso-border/40 hover:text-espresso-950 dark:hover:text-white">
+          <span class="">03 // EXPERIENCE</span>
+          <span class="text-xs text-espresso-muted">CAREER LOG</span>
+        </a>
+        <a href="#projects" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2 border-b border-linen-border/40 dark:border-espresso-border/40 hover:text-espresso-950 dark:hover:text-white">
+          <span class="">04 // PROJECTS</span>
+          <span class="text-xs text-espresso-muted">LAB &amp; PROD</span>
+        </a>
+        <a href="#skills" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2 border-b border-linen-border/40 dark:border-espresso-border/40 hover:text-espresso-950 dark:hover:text-white">
+          <span class="">05 // SKILLS</span>
+          <span class="text-xs text-espresso-muted">TOOLKIT</span>
+        </a>
+        <a href="#contact" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2 hover:text-espresso-950 dark:hover:text-white">
+          <span class="">06 // CONTACT</span>
+          <span class="text-xs text-espresso-muted">GET IN TOUCH</span>
+        </a>
+      </nav>
+      <div class="pt-4 border-t border-linen-border dark:border-espresso-border flex justify-between items-center text-xs font-mono text-espresso-muted">
+        <span class="">LOC: NOIDA / DELHI, IN</span>
+        <span class="">LAT: 28.5355° N</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       MAIN DESKTOP TWO-COLUMN ARCHITECTURE
+       ======================================================== -->
+  <div class="min-h-screen flex flex-col md:flex-row max-w-[1560px] mx-auto relative">
+    
+    <!-- ======================================================
+         FIXED NON-SCROLLING LEFT SIDEBAR (~280px)
+         ====================================================== -->
+    <aside class="hidden md:flex flex-col justify-between w-[280px] shrink-0 fixed top-0 bottom-0 z-20 border-r border-linen-border dark:border-espresso-border bg-linen-100/90 dark:bg-espresso-900/90 backdrop-blur-sm p-8 select-none">
+      
+      <!-- Top Brandmark & Specification Tag -->
+      <div>
+        <div class="flex items-baseline justify-between mb-1">
+          <a href="#home" class="group block">
+            <h1 class="font-editorial text-4xl tracking-tight font-bold text-espresso-850 dark:text-[#EDEDEC] group-hover:opacity-80 transition">
+              ARJUN
+            </h1>
+          </a>
+          <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-linen-200 dark:bg-espresso-800 text-espresso-muted dark:text-espresso-muted tracking-wider">v2.6</span>
+        </div>
+        <p class="font-mono text-xs tracking-wider text-espresso-muted dark:text-[#9A948D] uppercase">
+          Software Systems Engineer
+        </p>
+
+        <!-- Subtle architectural metadata rule -->
+        <div class="mt-4 pt-3 border-t border-linen-border/60 dark:border-espresso-border/60 text-[11px] font-mono text-espresso-muted dark:text-[#807B75] space-y-0.5">
+          <div class="flex justify-between">
+            <span class="">INDEX TYPE:</span>
+            <span class="text-espresso-850 dark:text-[#EDEDEC]">TECH.EDITION</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="">FOCUS:</span>
+            <span class="text-espresso-850 dark:text-[#EDEDEC]">DISTRIBUTED / FULL STACK</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Navigation: Clean Numbered List with Monospace Prefixes -->
+      <nav class="my-auto py-6" id="sidebar-nav">
+        <p class="text-[10px] font-mono tracking-widest text-espresso-muted/80 dark:text-espresso-muted uppercase mb-3 px-3">
+          SECTION INDEX
+        </p>
+        <ul class="space-y-1 font-mono text-xs">
+          <li class="">
+            <a href="#home" class="nav-link group flex items-center justify-between px-3 py-2 rounded transition-all duration-150 border-l-2 border-espresso-850 dark:border-[#EDEDEC] bg-linen-200/60 dark:bg-espresso-800/60 text-espresso-850 dark:text-[#EDEDEC] font-semibold" data-target="home">
+              <span class="flex items-center gap-2">
+                <span class="text-espresso-muted dark:text-espresso-muted">01</span>
+                <span class="tracking-wider">HOME</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-espresso-850 dark:bg-[#EDEDEC] indicator"></span>
+            </a>
+          </li>
+          <li class="">
+            <a href="#about" class="nav-link group flex items-center justify-between px-3 py-2 rounded transition-all duration-150 border-l-2 border-transparent text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-[#EDEDEC] hover:bg-linen-200/40 dark:hover:bg-espresso-800/30" data-target="about">
+              <span class="flex items-center gap-2">
+                <span class="">02</span>
+                <span class="tracking-wider">ABOUT</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-transparent indicator"></span>
+            </a>
+          </li>
+          <li class="">
+            <a href="#experience" class="nav-link group flex items-center justify-between px-3 py-2 rounded transition-all duration-150 border-l-2 border-transparent text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-[#EDEDEC] hover:bg-linen-200/40 dark:hover:bg-espresso-800/30" data-target="experience">
+              <span class="flex items-center gap-2">
+                <span class="">03</span>
+                <span class="tracking-wider">EXPERIENCE</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-transparent indicator"></span>
+            </a>
+          </li>
+          <li class="">
+            <a href="#projects" class="nav-link group flex items-center justify-between px-3 py-2 rounded transition-all duration-150 border-l-2 border-transparent text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-[#EDEDEC] hover:bg-linen-200/40 dark:hover:bg-espresso-800/30" data-target="projects">
+              <span class="flex items-center gap-2">
+                <span class="">04</span>
+                <span class="tracking-wider">PROJECTS</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-transparent indicator"></span>
+            </a>
+          </li>
+          <li class="">
+            <a href="#skills" class="nav-link group flex items-center justify-between px-3 py-2 rounded transition-all duration-150 border-l-2 border-transparent text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-[#EDEDEC] hover:bg-linen-200/40 dark:hover:bg-espresso-800/30" data-target="skills">
+              <span class="flex items-center gap-2">
+                <span class="">05</span>
+                <span class="tracking-wider">SKILLS</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-transparent indicator"></span>
+            </a>
+          </li>
+          <li class="">
+            <a href="#contact" class="nav-link group flex items-center justify-between px-3 py-2 rounded transition-all duration-150 border-l-2 border-transparent text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-[#EDEDEC] hover:bg-linen-200/40 dark:hover:bg-espresso-800/30" data-target="contact">
+              <span class="flex items-center gap-2">
+                <span class="">06</span>
+                <span class="tracking-wider">CONTACT</span>
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full bg-transparent indicator"></span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Bottom Anchor: Slim Horizontal Divider & Row of Social Icons -->
+      <div>
+        <div class="h-px w-full bg-linen-border dark:bg-espresso-border mb-5"></div>
+        
+        <div class="flex items-center justify-between text-espresso-850 dark:text-[#EDEDEC]">
+          <!-- GitHub -->
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="p-2 rounded hover:bg-linen-200 dark:hover:bg-espresso-800 transition text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-white" title="GitHub Profile">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+            </svg>
+          </a>
+          <!-- LinkedIn -->
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="p-2 rounded hover:bg-linen-200 dark:hover:bg-espresso-800 transition text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-white" title="LinkedIn Profile">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.77v8.37H6.46v-8.37M7.84 6.2a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z"></path>
+            </svg>
+          </a>
+          <!-- X (Twitter) -->
+          <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="p-2 rounded hover:bg-linen-200 dark:hover:bg-espresso-800 transition text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-white" title="X Profile">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+            </svg>
+          </a>
+          <!-- Email Direct -->
+          <a href="mailto:arjun.engineering@proton.me" class="p-2 rounded hover:bg-linen-200 dark:hover:bg-espresso-800 transition text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-white" title="Email Arjun">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+          </a>
+        </div>
+        
+        <div class="mt-3 text-[10px] font-mono text-espresso-muted/70 dark:text-espresso-muted flex justify-between">
+          <span class="">TIMEZONE: UTC+05:30</span>
+          <span class="">© 2026 ARJUN</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Placeholder Spacer for desktop fixed sidebar -->
+    <div class="hidden md:block w-[280px] shrink-0"></div>
+
+    <!-- ======================================================
+         FLUID, SCROLLABLE RIGHT-HAND CONTENT AREA
+         ====================================================== -->
+    <main class="flex-1 w-full min-w-0 p-6 md:p-12 lg:p-16 space-y-24 md:space-y-32">
+
+      <!-- ====================================================
+           SECTION A: HERO & ABOUT (Split Layout)
+           ==================================================== -->
+      <section id="home" class="scroll-mt-10">
+        <!-- Section Tracker Tag -->
+        <div class="flex items-center gap-3 font-mono text-xs tracking-widest text-espresso-muted dark:text-[#8E877F] uppercase mb-6">
+          <span class="">[ 01 // ARCHITECTURE OVERVIEW ]</span>
+          <div class="h-px flex-1 bg-linen-border/70 dark:bg-espresso-border"></div>
+          <span class="">FOLIO.LOG.01</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+          
+          <!-- Left: High-Contrast Monochromatic Editorial Portrait -->
+          <div class="lg:col-span-5 relative group">
+            <div class="relative overflow-hidden border border-linen-border dark:border-espresso-border bg-linen-200 dark:bg-espresso-800 shadow-sm">
+              <!-- Technical overlay coordinate marks -->
+              <div class="absolute top-2 left-2 z-10 font-mono text-[9px] px-1.5 py-0.5 bg-espresso-850/80 text-linen-100 backdrop-blur-xs tracking-widest">
+                FIG.01 // PORTRAIT.RAW
+              </div>
+              <div class="absolute bottom-2 right-2 z-10 font-mono text-[9px] px-1.5 py-0.5 bg-linen-50/90 dark:bg-espresso-900/90 text-espresso-850 dark:text-[#EDEDEC] tracking-widest border border-linen-border dark:border-espresso-border">
+                SCALE: 1:1 MONO
+              </div>
+              
+              <!-- Editorial Portrait Placeholder (Generated High Contrast) -->
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg3h0uXNua5YLtlCVLiB7rhMoppkaUPL3GE5qGVRq9HxWbNhH_JU6DofxRtTJfvrp_DPdL2YbDeQT484mOuBWIKmbdBrm3jVOB1ZeotKBKcoUJu9Vc0tcLwMgy1BMLhzLkrp5ZjJ_bufbJU5qhiNWMEUULVdJobmUr7Vqv_gFy1OeTpMz8M3jkoXixMfPUVelNRHDly_8m3sKa4HtjNOmt_o6RBE1ojf9QiM5tkCbbNbDtmjGIz3I1Zg" alt="Editorial monochrome portrait of Arjun, Software Engineer" class="w-full aspect-square object-cover grayscale contrast-125 hover:scale-[1.01] transition-transform duration-500 ease-out" loading="eager">
+            </div>
+
+            <!-- Architectural specification caption below portrait -->
+            <div class="mt-3.5 flex justify-between items-center text-[11px] font-mono text-espresso-muted dark:text-[#9A948D] border-b border-linen-border/60 dark:border-espresso-border pb-2">
+              <span class="">PROFILE / SYSTEM OPERATOR</span>
+              <span class="text-espresso-850 dark:text-[#EDEDEC] font-semibold">ARJUN (He/Him)</span>
+            </div>
+            <div class="mt-2 flex justify-between items-center text-[11px] font-mono text-espresso-muted dark:text-[#9A948D]">
+              <span class="">STATUS:</span>
+              <span class="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> AVAILABLE FOR NEW ROLES
+              </span>
+            </div>
+          </div>
+
+          <!-- Right: Technical Bio, Current Focus, Actions -->
+          <div class="lg:col-span-7 flex flex-col justify-between h-full space-y-6">
+            <div>
+              <div class="inline-block px-2 py-0.5 mb-3 font-mono text-[11px] tracking-widest uppercase bg-linen-200 dark:bg-espresso-800 border border-linen-border dark:border-espresso-border text-espresso-850 dark:text-[#EDEDEC]">
+                SYSTEMS &amp; DISTRIBUTED ARCHITECTURE
+              </div>
+              <h2 class="font-editorial text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.08] text-espresso-850 dark:text-[#EDEDEC]">
+                Building high-throughput, deterministic backend infrastructure &amp; resilient user interfaces.
+              </h2>
+            </div>
+
+            <!-- Technical Bio Text -->
+            <div class="space-y-4 text-espresso-850/85 dark:text-[#D1CBC5] text-base leading-relaxed font-sans">
+              <p class="">
+                I am a software engineer focused on distributed background workers, database indexing ergonomics, and low-latency full-stack applications. My work balances computational efficiency with publication-grade frontend craft.
+              </p>
+              <p class="">
+                Currently exploring PostgreSQL trigram performance bottlenecks versus inverted index engines (Elasticsearch), streaming queues with Redis, and typed end-to-end full stack web architecture.
+              </p>
+            </div>
+
+            <!-- Current Focus & Education Matrix -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-linen-border dark:border-espresso-border font-mono text-xs">
+              <div class="p-3.5 bg-linen-50/70 dark:bg-espresso-850/70 border border-linen-border/80 dark:border-espresso-border">
+                <span class="text-[10px] text-espresso-muted dark:text-[#8E877F] uppercase tracking-wider block mb-1">
+                  CURRENT RESEARCH &amp; FOCUS
+                </span>
+                <p class="font-sans text-xs text-espresso-850 dark:text-[#EDEDEC] font-medium leading-snug">
+                  Asynchronous ingestion queues, PostgreSQL full-text search indexing, and deterministic event triage.
+                </p>
+              </div>
+
+              <div class="p-3.5 bg-linen-50/70 dark:bg-espresso-850/70 border border-linen-border/80 dark:border-espresso-border">
+                <span class="text-[10px] text-espresso-muted dark:text-[#8E877F] uppercase tracking-wider block mb-1">
+                  ACADEMIC BACKGROUND
+                </span>
+                <p class="font-sans text-xs text-espresso-850 dark:text-[#EDEDEC] font-medium leading-snug">
+                  B.Tech in Computer Science &amp; Engineering<br>
+                  <span class="font-mono text-[11px] text-espresso-muted">Core: Concurrency, OS, DB Systems</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Action Buttons: View Resume and View My Work -->
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+              <a href="#projects" class="inline-flex items-center gap-2 px-6 py-3 font-mono text-xs font-semibold tracking-wider uppercase bg-espresso-850 text-linen-50 dark:bg-[#EDEDEC] dark:text-espresso-950 hover:opacity-90 transition shadow-sm rounded-none border border-espresso-850 dark:border-white">
+                <span class="">VIEW MY WORK</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+              </a>
+
+              <a href="#contact" class="inline-flex items-center gap-2 px-6 py-3 font-mono text-xs font-semibold tracking-wider uppercase bg-transparent text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] hover:bg-linen-200/50 dark:hover:bg-espresso-800 transition rounded-none">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span class="">VIEW RESUME (PDF)</span>
+              </a>
+
+              <button onclick="copyEmail()" id="hero-copy-email-btn" class="inline-flex items-center gap-1.5 px-3 py-3 font-mono text-xs text-espresso-muted hover:text-espresso-850 dark:hover:text-[#EDEDEC] transition" title="Copy arjun.engineering@proton.me">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                </svg>
+                <span id="hero-copy-text" class="">COPY EMAIL</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================
+           SECTION B: EXPERIENCE (Clean Editorial Index)
+           ==================================================== -->
+      <section id="experience" class="scroll-mt-16">
+        <!-- Section Tracker Tag -->
+        <div class="flex items-center gap-3 font-mono text-xs tracking-widest text-espresso-muted dark:text-[#8E877F] uppercase mb-8">
+          <span class="">[ 02 // CAREER TIMELINE &amp; IMPACT ]</span>
+          <div class="h-px flex-1 bg-linen-border/70 dark:bg-espresso-border"></div>
+          <span class="">INDEX.EXP</span>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-6">
+          <div>
+            <h3 class="font-editorial text-3xl sm:text-4xl text-espresso-850 dark:text-[#EDEDEC]">
+              Industry &amp; Production Experience
+            </h3>
+            <p class="font-sans text-sm text-espresso-muted dark:text-[#9A948D] mt-1">
+              Verifiable engineering track record in fast-paced software environments.
+            </p>
+          </div>
+          <div class="mt-3 md:mt-0 font-mono text-xs text-espresso-muted">
+            ENTRIES: 03 RECORDED
+          </div>
+        </div>
+
+        <!-- Horizontal row-based list with border dividers -->
+        <div class="border-t border-linen-border dark:border-espresso-border divide-y divide-linen-border dark:divide-espresso-border">
+          
+          <!-- Primary Entry: Unfazed AI -->
+          <article class="py-6 group hover:bg-linen-50/50 dark:hover:bg-espresso-850/40 transition-colors duration-150 px-2 sm:px-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-baseline">
+              
+              <!-- Date Range -->
+              <div class="md:col-span-3 font-mono text-xs text-espresso-muted dark:text-[#9A948D] tracking-tight">
+                DEC 2025 – JUL 2026
+                <span class="inline-block ml-2 px-1.5 py-0.2 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-mono border border-emerald-300 dark:border-emerald-800">
+                  ON-SITE
+                </span>
+              </div>
+
+              <!-- Company / Location -->
+              <div class="md:col-span-3">
+                <div class="font-mono text-sm font-semibold text-espresso-850 dark:text-[#EDEDEC] flex items-center gap-1.5">
+                  Unfazed AI
+                  <span class="text-xs text-espresso-muted font-normal">/ Noida, India</span>
+                </div>
+                <div class="font-mono text-xs text-espresso-muted dark:text-[#8E877F] mt-0.5">
+                  Full Stack Developer
+                </div>
+              </div>
+
+              <!-- 1-Line Impact Summary -->
+              <div class="md:col-span-6">
+                <p class="text-sm font-sans text-espresso-850/90 dark:text-[#D1CBC5] leading-relaxed">
+                  "Improved user experience and built scalable, event-driven backend systems for real-time document search, filtering, and urgency triage."
+                </p>
+                <!-- Key achievements bullets -->
+                <div class="mt-2.5 flex flex-wrap gap-2 font-mono text-[11px] text-espresso-muted dark:text-[#8E877F]">
+                  <span class="px-2 py-0.5 bg-linen-200/60 dark:bg-espresso-800 border border-linen-border/60 dark:border-espresso-border">Latency: -42% P95</span>
+                  <span class="px-2 py-0.5 bg-linen-200/60 dark:bg-espresso-800 border border-linen-border/60 dark:border-espresso-border">Event Streaming</span>
+                  <span class="px-2 py-0.5 bg-linen-200/60 dark:bg-espresso-800 border border-linen-border/60 dark:border-espresso-border">Node.js / Redis</span>
+                </div>
+              </div>
+
+            </div>
+          </article>
+
+          <!-- Second Entry: Scaled Systems Labs -->
+          <article class="py-6 group hover:bg-linen-50/50 dark:hover:bg-espresso-850/40 transition-colors duration-150 px-2 sm:px-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-baseline">
+              
+              <div class="md:col-span-3 font-mono text-xs text-espresso-muted dark:text-[#9A948D] tracking-tight">
+                JAN 2025 – NOV 2025
+                <span class="inline-block ml-2 px-1.5 py-0.2 bg-linen-200 dark:bg-espresso-800 text-espresso-muted text-[10px] font-mono border border-linen-border dark:border-espresso-border">
+                  REMOTE
+                </span>
+              </div>
+
+              <div class="md:col-span-3">
+                <div class="font-mono text-sm font-semibold text-espresso-850 dark:text-[#EDEDEC] flex items-center gap-1.5">
+                  Apex Data Labs
+                  <span class="text-xs text-espresso-muted font-normal">/ Bengaluru, IN</span>
+                </div>
+                <div class="font-mono text-xs text-espresso-muted dark:text-[#8E877F] mt-0.5">
+                  Backend Systems Intern
+                </div>
+              </div>
+
+              <div class="md:col-span-6">
+                <p class="text-sm font-sans text-espresso-850/90 dark:text-[#D1CBC5] leading-relaxed">
+                  Engineered automated ingestion telemetry pipelines for telemetry data streams; benchmarked database read replicas under synthetic 5,000 req/sec loads.
+                </p>
+                <div class="mt-2.5 flex flex-wrap gap-2 font-mono text-[11px] text-espresso-muted dark:text-[#8E877F]">
+                  <span class="px-2 py-0.5 bg-linen-200/60 dark:bg-espresso-800 border border-linen-border/60 dark:border-espresso-border">PostgreSQL Trigrams</span>
+                  <span class="px-2 py-0.5 bg-linen-200/60 dark:bg-espresso-800 border border-linen-border/60 dark:border-espresso-border">Docker / Grafana</span>
+                </div>
+              </div>
+
+            </div>
+          </article>
+
+          <!-- Third Entry: Open Engineering Fellow -->
+          <article class="py-6 group hover:bg-linen-50/50 dark:hover:bg-espresso-850/40 transition-colors duration-150 px-2 sm:px-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-baseline">
+              
+              <div class="md:col-span-3 font-mono text-xs text-espresso-muted dark:text-[#9A948D] tracking-tight">
+                JUN 2024 – DEC 2024
+              </div>
+
+              <div class="md:col-span-3">
+                <div class="font-mono text-sm font-semibold text-espresso-850 dark:text-[#EDEDEC] flex items-center gap-1.5">
+                  Distributed Core Collective
+                  <span class="text-xs text-espresso-muted font-normal">/ Open Source</span>
+                </div>
+                <div class="font-mono text-xs text-espresso-muted dark:text-[#8E877F] mt-0.5">
+                  Open Source Contributor
+                </div>
+              </div>
+
+              <div class="md:col-span-6">
+                <p class="text-sm font-sans text-espresso-850/90 dark:text-[#D1CBC5] leading-relaxed">
+                  Authored benchmarking harness suite comparing in-memory sliding window counters against token bucket rate limiting implementations under packet loss.
+                </p>
+                <div class="mt-2.5 flex flex-wrap gap-2 font-mono text-[11px] text-espresso-muted dark:text-[#8E877F]">
+                  <span class="px-2 py-0.5 bg-linen-200/60 dark:bg-espresso-800 border border-linen-border/60 dark:border-espresso-border">Concurrency</span>
+                  <span class="px-2 py-0.5 bg-linen-200/60 dark:bg-espresso-800 border border-linen-border/60 dark:border-espresso-border">Redis Lua Scripts</span>
+                </div>
+              </div>
+
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ====================================================
+           SECTION C: PROJECTS (Visual Grid & Engineering Focus)
+           ==================================================== -->
+      <section id="projects" class="scroll-mt-16">
+        <!-- Section Tracker Tag -->
+        <div class="flex items-center gap-3 font-mono text-xs tracking-widest text-espresso-muted dark:text-[#8E877F] uppercase mb-8">
+          <span class="">[ 03 // TECHNICAL EXPERIMENTS &amp; SYSTEMS ]</span>
+          <div class="h-px flex-1 bg-linen-border/70 dark:bg-espresso-border"></div>
+          <span class="">GRID.2x2</span>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+          <div>
+            <h3 class="font-editorial text-3xl sm:text-4xl text-espresso-850 dark:text-[#EDEDEC]">
+              Featured Engineering Projects
+            </h3>
+            <p class="font-sans text-sm text-espresso-muted dark:text-[#9A948D] mt-1">
+              Production systems, stress-tested architectures, and technical benchmarking laboratories.
+            </p>
+          </div>
+          <div class="mt-3 md:mt-0 font-mono text-xs text-espresso-muted flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> ALL SYSTEMS BENCHMARKED
+          </div>
+        </div>
+
+        <!-- Two-column visual cards displaying architecture diagrams/interface previews -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          
+          <!-- PROJECT 1: Search-test (Interactive benchmarking lab) -->
+          <div class="border border-linen-border dark:border-espresso-border bg-linen-50/60 dark:bg-espresso-850/60 flex flex-col justify-between hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition-all duration-200 group">
+            
+            <!-- Technical Blueprint Header / Architecture Diagram Graphic -->
+            <div class="p-5 border-b border-linen-border dark:border-espresso-border bg-linen-200/30 dark:bg-espresso-950/40">
+              <div class="flex justify-between items-center mb-3">
+                <span class="font-mono text-[11px] text-espresso-muted dark:text-espresso-muted">SYSTEM REF: PRJ-01</span>
+                <span class="inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                  <span class="w-1 h-1 rounded-full bg-emerald-500"></span> BENCHMARK COMPLETE
+                </span>
+              </div>
+              
+              <!-- Architecture Flow Diagram Block -->
+              <div class="p-4 bg-linen-100 dark:bg-espresso-900 border border-linen-border/80 dark:border-espresso-border font-mono text-xs relative overflow-hidden technical-grid">
+                <div class="flex justify-between items-center text-[10px] text-espresso-muted mb-2">
+                  <span class="">100K DOCS DATASET</span>
+                  <span class="">QUERY LATENCY COMPARATOR</span>
+                </div>
+                
+                <!-- Schematic SVG Diagram -->
+                <svg class="w-full h-24" viewBox="0 0 440 90" fill="none">
+                  <!-- Nodes -->
+                  <rect x="10" y="25" width="80" height="40" rx="3" class="fill-linen-50 dark:fill-espresso-850 stroke-linen-border dark:stroke-espresso-border" stroke-width="1.2"></rect>
+                  <text x="50" y="44" font-size="9" text-anchor="middle" class="fill-espresso-850 dark:fill-[#EDEDEC] font-mono">100K DOCS</text>
+                  <text x="50" y="55" font-size="7.5" text-anchor="middle" class="fill-espresso-muted font-mono">Ingest Pool</text>
+
+                  <rect x="140" y="25" width="95" height="40" rx="3" class="fill-linen-50 dark:fill-espresso-850 stroke-linen-border dark:stroke-espresso-border" stroke-width="1.2"></rect>
+                  <text x="187" y="44" font-size="9" text-anchor="middle" class="fill-espresso-850 dark:fill-[#EDEDEC] font-mono">PG TRIGRAMS</text>
+                  <text x="187" y="55" font-size="7.5" text-anchor="middle" class="fill-espresso-muted font-mono">GIN/GiST Index</text>
+
+                  <rect x="285" y="10" width="140" height="32" rx="3" class="fill-linen-50 dark:fill-espresso-850 stroke-linen-border dark:stroke-espresso-border" stroke-width="1.2"></rect>
+                  <text x="355" y="26" font-size="8.5" text-anchor="middle" class="fill-espresso-850 dark:fill-[#EDEDEC] font-mono">POSTGRES FTS</text>
+                  <text x="355" y="36" font-size="7" text-anchor="middle" class="fill-emerald-600 dark:fill-emerald-400 font-mono">tsvector (18ms P99)</text>
+
+                  <rect x="285" y="50" width="140" height="32" rx="3" class="fill-linen-50 dark:fill-espresso-850 stroke-linen-border dark:stroke-espresso-border" stroke-width="1.2"></rect>
+                  <text x="355" y="66" font-size="8.5" text-anchor="middle" class="fill-espresso-850 dark:fill-[#EDEDEC] font-mono">ELASTICSEARCH</text>
+                  <text x="355" y="76" font-size="7" text-anchor="middle" class="fill-amber-600 dark:fill-amber-400 font-mono">BM25 Cluster (4ms P99)</text>
+
+                  <!-- Connecting wires -->
+                  <path d="M90 45 L140 45" stroke="#7A7570" stroke-width="1.2" class="wire-line"></path>
+                  <path d="M235 40 L260 40 L260 26 L285 26" stroke="#7A7570" stroke-width="1.2"></path>
+                  <path d="M235 50 L260 50 L260 66 L285 66" stroke="#7A7570" stroke-width="1.2"></path>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Card Content Body -->
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <h4 class="font-editorial text-2xl text-espresso-850 dark:text-[#EDEDEC] group-hover:text-espresso-950 dark:group-hover:text-white transition">
+                  Search-test: Indexing &amp; Query Lab
+                </h4>
+                <p class="font-sans text-sm text-espresso-850/80 dark:text-[#C4BEB7] mt-2.5 leading-relaxed">
+                  "An interactive search benchmarking lab comparing PostgreSQL Trigrams, Postgres FTS, and Elasticsearch across 100,000 documents."
+                </p>
+                
+                <!-- Tech tags -->
+                <div class="mt-4 flex flex-wrap gap-2 font-mono text-xs">
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">PostgreSQL</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Elasticsearch</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Node.js</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Benchmarking</span>
+                </div>
+              </div>
+
+              <!-- Button CTA -->
+              <div class="mt-6 pt-4 border-t border-linen-border/70 dark:border-espresso-border flex items-center justify-between">
+                <button onclick="openCaseStudy('search-test')" class="font-mono text-xs font-semibold tracking-wider text-espresso-850 dark:text-[#EDEDEC] hover:underline flex items-center gap-1.5">
+                  <span class="">VIEW CASE STUDY</span>
+                  <span class="font-mono">→</span>
+                </button>
+                <span class="font-mono text-[11px] text-espresso-muted">BENCHMARK LAB</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PROJECT 2: Distributed Job-Queue -->
+          <div class="border border-linen-border dark:border-espresso-border bg-linen-50/60 dark:bg-espresso-850/60 flex flex-col justify-between hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition-all duration-200 group">
+            
+            <div class="p-5 border-b border-linen-border dark:border-espresso-border bg-linen-200/30 dark:bg-espresso-950/40">
+              <div class="flex justify-between items-center mb-3">
+                <span class="font-mono text-[11px] text-espresso-muted dark:text-espresso-muted">SYSTEM REF: PRJ-02</span>
+                <span class="inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800">
+                  <span class="w-1 h-1 rounded-full bg-blue-500"></span> PROD REPLICA READY
+                </span>
+              </div>
+              
+              <!-- Architecture Flow Diagram Block -->
+              <div class="p-4 bg-linen-100 dark:bg-espresso-900 border border-linen-border/80 dark:border-espresso-border font-mono text-xs relative overflow-hidden technical-grid">
+                <div class="flex justify-between items-center text-[10px] text-espresso-muted mb-2">
+                  <span class="">PRODUCER / INGESTION</span>
+                  <span class="">REDIS STREAMS CONSUMER GROUPS</span>
+                </div>
+                
+                <svg class="w-full h-24" viewBox="0 0 440 90" fill="none">
+                  <!-- Producer -->
+                  <rect x="10" y="25" width="85" height="40" rx="3" class="fill-linen-50 dark:fill-espresso-850 stroke-linen-border dark:stroke-espresso-border" stroke-width="1.2"></rect>
+                  <text x="52" y="44" font-size="9" text-anchor="middle" class="fill-espresso-850 dark:fill-[#EDEDEC] font-mono">INGEST API</text>
+                  <text x="52" y="55" font-size="7.5" text-anchor="middle" class="fill-espresso-muted font-mono">HTTP Producer</text>
+
+                  <!-- Redis Stream Queue -->
+                  <rect x="135" y="20" width="130" height="50" rx="3" class="fill-linen-50 dark:fill-espresso-850 stroke-linen-border dark:stroke-espresso-border" stroke-width="1.2"></rect>
+                  <text x="200" y="42" font-size="9" text-anchor="middle" class="fill-espresso-850 dark:fill-[#EDEDEC] font-mono">REDIS STREAMS</text>
+                  <text x="200" y="55" font-size="7.5" text-anchor="middle" class="fill-emerald-600 dark:fill-emerald-400 font-mono">XADD / XREADGROUP</text>
+
+                  <!-- Workers -->
+                  <rect x="305" y="10" width="120" height="32" rx="3" class="fill-linen-50 dark:fill-espresso-850 stroke-linen-border dark:stroke-espresso-border" stroke-width="1.2"></rect>
+                  <text x="365" y="26" font-size="8.5" text-anchor="middle" class="fill-espresso-850 dark:fill-[#EDEDEC] font-mono">WORKER POOL A</text>
+                  <text x="365" y="36" font-size="7" text-anchor="middle" class="fill-espresso-muted font-mono">Auto-Ack ACK</text>
+
+                  <rect x="305" y="50" width="120" height="32" rx="3" class="fill-linen-50 dark:fill-espresso-850 stroke-linen-border dark:stroke-espresso-border" stroke-width="1.2"></rect>
+                  <text x="365" y="66" font-size="8.5" text-anchor="middle" class="fill-espresso-850 dark:fill-[#EDEDEC] font-mono">WORKER POOL B</text>
+                  <text x="365" y="76" font-size="7" text-anchor="middle" class="fill-espresso-muted font-mono">Postgres Persistent</text>
+
+                  <!-- Wires -->
+                  <path d="M95 45 L135 45" stroke="#7A7570" stroke-width="1.2" class="wire-line"></path>
+                  <path d="M265 40 L285 40 L285 26 L305 26" stroke="#7A7570" stroke-width="1.2"></path>
+                  <path d="M265 50 L285 50 L285 66 L305 66" stroke="#7A7570" stroke-width="1.2"></path>
+                </svg>
+              </div>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <h4 class="font-editorial text-2xl text-espresso-850 dark:text-[#EDEDEC] group-hover:text-espresso-950 dark:group-hover:text-white transition">
+                  Distributed Job-Queue Engine
+                </h4>
+                <p class="font-sans text-sm text-espresso-850/80 dark:text-[#C4BEB7] mt-2.5 leading-relaxed">
+                  "Engineered a distributed background job processing engine with Node.js, Redis Streams, and PostgreSQL to decouple ingestion from asynchronous worker execution."
+                </p>
+                
+                <div class="mt-4 flex flex-wrap gap-2 font-mono text-xs">
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Node.js</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Redis Streams</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">PostgreSQL</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Distributed Systems</span>
+                </div>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-linen-border/70 dark:border-espresso-border flex items-center justify-between">
+                <button onclick="openCaseStudy('job-queue')" class="font-mono text-xs font-semibold tracking-wider text-espresso-850 dark:text-[#EDEDEC] hover:underline flex items-center gap-1.5">
+                  <span class="">VIEW CASE STUDY</span>
+                  <span class="font-mono">→</span>
+                </button>
+                <span class="font-mono text-[11px] text-espresso-muted">SYSTEM ENGINE</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PROJECT 3: Nexus Collaborative Workspace -->
+          <div class="border border-linen-border dark:border-espresso-border bg-linen-50/60 dark:bg-espresso-850/60 flex flex-col justify-between hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition-all duration-200 group">
+            
+            <div class="p-5 border-b border-linen-border dark:border-espresso-border bg-linen-200/30 dark:bg-espresso-950/40">
+              <div class="flex justify-between items-center mb-3">
+                <span class="font-mono text-[11px] text-espresso-muted dark:text-espresso-muted">SYSTEM REF: PRJ-03</span>
+                <span class="inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                  <span class="w-1 h-1 rounded-full bg-emerald-500"></span> STABLE v1.2
+                </span>
+              </div>
+              
+              <!-- Architecture preview block -->
+              <div class="p-4 bg-linen-100 dark:bg-espresso-900 border border-linen-border/80 dark:border-espresso-border font-mono text-xs relative overflow-hidden technical-grid">
+                <div class="flex justify-between items-center text-[10px] text-espresso-muted mb-2">
+                  <span class="">WEBSOCKET SYNC BUS</span>
+                  <span class="">CONFLICT RESOLUTION (CRDT)</span>
+                </div>
+                
+                <div class="h-24 flex items-center justify-center font-mono text-xs text-espresso-muted border border-dashed border-linen-border dark:border-espresso-border p-3 text-center">
+                  <div>
+                    <div class="font-semibold text-espresso-850 dark:text-[#EDEDEC] mb-1">[WEBSOCKET MESH // STATE SYNC ENGINE]</div>
+                    <div class="text-[10px] text-espresso-muted">P2P Heartbeat • Document Delta Serialization • Room PubSub</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <h4 class="font-editorial text-2xl text-espresso-850 dark:text-[#EDEDEC] group-hover:text-espresso-950 dark:group-hover:text-white transition">
+                  Nexus: Distributed Document Engine
+                </h4>
+                <p class="font-sans text-sm text-espresso-850/80 dark:text-[#C4BEB7] mt-2.5 leading-relaxed">
+                  High-performance collaborative workspace and distributed document engine with zero-conflict real-time state synchronization and delta compression.
+                </p>
+                
+                <div class="mt-4 flex flex-wrap gap-2 font-mono text-xs">
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">TypeScript</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">WebSockets</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">React</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">CRDT Engine</span>
+                </div>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-linen-border/70 dark:border-espresso-border flex items-center justify-between">
+                <button onclick="openCaseStudy('nexus')" class="font-mono text-xs font-semibold tracking-wider text-espresso-850 dark:text-[#EDEDEC] hover:underline flex items-center gap-1.5">
+                  <span class="">VIEW CASE STUDY</span>
+                  <span class="font-mono">→</span>
+                </button>
+                <span class="font-mono text-[11px] text-espresso-muted">COLLABORATIVE APP</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PROJECT 4: Rate Limiter -->
+          <div class="border border-linen-border dark:border-espresso-border bg-linen-50/60 dark:bg-espresso-850/60 flex flex-col justify-between hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition-all duration-200 group">
+            
+            <div class="p-5 border-b border-linen-border dark:border-espresso-border bg-linen-200/30 dark:bg-espresso-950/40">
+              <div class="flex justify-between items-center mb-3">
+                <span class="font-mono text-[11px] text-espresso-muted dark:text-espresso-muted">SYSTEM REF: PRJ-04</span>
+                <span class="inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800">
+                  <span class="w-1 h-1 rounded-full bg-purple-500"></span> ZERO-LEAK ALGORITHM
+                </span>
+              </div>
+              
+              <div class="p-4 bg-linen-100 dark:bg-espresso-900 border border-linen-border/80 dark:border-espresso-border font-mono text-xs relative overflow-hidden technical-grid">
+                <div class="flex justify-between items-center text-[10px] text-espresso-muted mb-2">
+                  <span class="">TOKEN BUCKET WITH SLIDING LOG</span>
+                  <span class="">ATOMIC EVALUATION</span>
+                </div>
+                
+                <div class="h-24 flex items-center justify-center font-mono text-xs text-espresso-muted border border-dashed border-linen-border dark:border-espresso-border p-3 text-center">
+                  <div>
+                    <div class="font-semibold text-espresso-850 dark:text-[#EDEDEC] mb-1">[ATOMIC LUA SLIDING-LOG EVAL]</div>
+                    <div class="text-[10px] text-espresso-muted">0.4ms overhead • Microsecond Precision • Edge Ingress Protection</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <h4 class="font-editorial text-2xl text-espresso-850 dark:text-[#EDEDEC] group-hover:text-espresso-950 dark:group-hover:text-white transition">
+                  Distributed Rate Limiter
+                </h4>
+                <p class="font-sans text-sm text-espresso-850/80 dark:text-[#C4BEB7] mt-2.5 leading-relaxed">
+                  Distributed token-bucket rate limiter with sliding log support implemented using atomic Redis Lua scripts to eliminate race conditions under distributed traffic bursts.
+                </p>
+                
+                <div class="mt-4 flex flex-wrap gap-2 font-mono text-xs">
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Redis Lua</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Node.js</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Concurrency</span>
+                  <span class="px-2 py-0.5 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">System Security</span>
+                </div>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-linen-border/70 dark:border-espresso-border flex items-center justify-between">
+                <button onclick="openCaseStudy('rate-limiter')" class="font-mono text-xs font-semibold tracking-wider text-espresso-850 dark:text-[#EDEDEC] hover:underline flex items-center gap-1.5">
+                  <span class="">VIEW CASE STUDY</span>
+                  <span class="font-mono">→</span>
+                </button>
+                <span class="font-mono text-[11px] text-espresso-muted">CONCURRENCY LAB</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================
+           SECTION D: DEDICATED PROJECT CASE STUDY TEMPLATE (INTERACTIVE MODAL/DRAWER)
+           ==================================================== -->
+      <!-- Interactive Modal Overlay Container -->
+      <div id="case-study-modal" class="fixed inset-0 z-50 bg-espresso-950/80 backdrop-blur-md hidden overflow-y-auto p-4 sm:p-6 md:p-10 flex justify-center items-start" onclick="closeCaseStudy(event)" role="dialog" aria-modal="true" aria-labelledby="modal-case-title">
+        <div id="case-study-card" class="bg-linen-100 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border w-full max-w-4xl shadow-2xl my-auto transition-transform duration-300" onclick="event.stopPropagation()">
+          <!-- Modal Top Navigation Bar -->
+          <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-linen-border dark:border-espresso-border bg-linen-100/95 dark:bg-espresso-900/95 backdrop-blur-md">
+            <button onclick="closeCaseStudy()" class="font-mono text-xs text-espresso-muted hover:text-espresso-850 dark:hover:text-[#EDEDEC] flex items-center gap-2 group">
+              <span class="group-hover:-translate-x-0.5 transition-transform">←</span>
+              <span class="">BACK TO PROJECTS DIRECTORY</span>
+            </button>
+            <button onclick="closeCaseStudy()" class="p-1.5 rounded hover:bg-linen-200 dark:hover:bg-espresso-800 text-espresso-muted hover:text-espresso-850 dark:hover:text-[#EDEDEC] transition" aria-label="Close modal">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dynamic Modal Body Content -->
+          <div class="p-6 sm:p-10 space-y-10" id="case-study-content">
+            
+            <!-- HEADER BLOCK -->
+            <div class="space-y-4">
+              <div class="flex flex-wrap items-center gap-3">
+                <span id="modal-case-badge" class="font-mono text-[10px] px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 uppercase">
+                  DEPLOYMENT: LIVE SYSTEM
+                </span>
+                <span id="modal-case-ref" class="font-mono text-xs text-espresso-muted">
+                  ARCH.SPEC // PRJ-01
+                </span>
+              </div>
+              
+              <h2 id="modal-case-title" class="font-editorial text-4xl sm:text-5xl text-espresso-850 dark:text-[#EDEDEC]">
+                Search-test: PostgreSQL Trigrams vs Elasticsearch
+              </h2>
+
+              <p id="modal-case-desc" class="text-base text-espresso-850/80 dark:text-[#D1CBC5] max-w-2xl leading-relaxed">
+                An interactive search benchmarking lab comparing PostgreSQL Trigrams, Postgres FTS, and Elasticsearch across 100,000 documents under concurrent query pressure.
+              </p>
+
+              <!-- External Links -->
+              <div class="flex items-center gap-4 pt-2 font-mono text-xs">
+                <a id="modal-case-demo" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-espresso-850 dark:text-[#EDEDEC] font-semibold underline underline-offset-4 hover:opacity-80">
+                  <span class="">LIVE BENCHMARK LAB</span>
+                  <span class="">↗</span>
+                </a>
+                <a id="modal-case-github" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-espresso-muted hover:text-espresso-850 dark:hover:text-[#EDEDEC]">
+                  <span class="">GITHUB REPO</span>
+                  <span class="">↗</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- ARCHITECTURE DATA-FLOW DIAGRAM BLOCK -->
+            <div class="space-y-3">
+              <div class="flex justify-between items-center text-xs font-mono text-espresso-muted">
+                <span class="">SYSTEM DATA-FLOW ARCHITECTURE</span>
+                <span class="">SCHEMATIC DIAGRAM v1.4</span>
+              </div>
+              
+              <div class="p-6 bg-linen-200/50 dark:bg-espresso-950 border border-linen-border dark:border-espresso-border technical-grid rounded-none">
+                <!-- Visual System Data-Flow Diagram -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center font-mono text-xs">
+                  
+                  <div class="p-4 bg-linen-50 dark:bg-espresso-850 border border-linen-border dark:border-espresso-border">
+                    <div class="text-[10px] text-espresso-muted mb-1">01. INGESTION</div>
+                    <div class="font-semibold text-espresso-850 dark:text-[#EDEDEC]">100K JSON DOCS</div>
+                    <div class="text-[10px] text-espresso-muted mt-2">Bulk Pipeline Stream</div>
+                  </div>
+
+                  <div class="p-4 bg-linen-50 dark:bg-espresso-850 border border-linen-border dark:border-espresso-border relative">
+                    <div class="text-[10px] text-espresso-muted mb-1">02. DUAL INDEX</div>
+                    <div class="font-semibold text-espresso-850 dark:text-[#EDEDEC]">PG GIN &amp; BM25</div>
+                    <div class="text-[10px] text-espresso-muted mt-2">Trigram + Inverted Index</div>
+                  </div>
+
+                  <div class="p-4 bg-linen-50 dark:bg-espresso-850 border border-linen-border dark:border-espresso-border">
+                    <div class="text-[10px] text-espresso-muted mb-1">03. HARNESS</div>
+                    <div class="font-semibold text-espresso-850 dark:text-[#EDEDEC]">LOAD GENERATOR</div>
+                    <div class="text-[10px] text-espresso-muted mt-2">500 Concurrent Clients</div>
+                  </div>
+
+                  <div class="p-4 bg-linen-50 dark:bg-espresso-850 border border-linen-border dark:border-espresso-border">
+                    <div class="text-[10px] text-emerald-600 dark:text-emerald-400 mb-1">04. TELEMETRY</div>
+                    <div class="font-semibold text-espresso-850 dark:text-[#EDEDEC]">P50 / P95 / P99</div>
+                    <div class="text-[10px] text-espresso-muted mt-2">Real-Time Histogram</div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- THE CHALLENGE & SYSTEM CONSTRAINTS (2-Column Breakdown) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              <div class="p-5 border border-linen-border dark:border-espresso-border bg-linen-50/50 dark:bg-espresso-850/40 space-y-2">
+                <span class="font-mono text-[10px] text-espresso-muted uppercase tracking-wider block">
+                  THE CHALLENGE
+                </span>
+                <h4 class="font-mono text-sm font-semibold text-espresso-850 dark:text-[#EDEDEC]">
+                  Index Bloat vs Typo Tolerance
+                </h4>
+                <p class="text-xs text-espresso-850/80 dark:text-[#C4BEB7] leading-relaxed">
+                  PostgreSQL Trigram (pg_trgm) indexing excels at fuzzy character-level matching but exhibits significant memory expansion and heavy CPU locking during high-frequency writes. The system needed deterministic latency comparisons against dedicated Lucene inverted indexes.
+                </p>
+              </div>
+
+              <div class="p-5 border border-linen-border dark:border-espresso-border bg-linen-50/50 dark:bg-espresso-850/40 space-y-2">
+                <span class="font-mono text-[10px] text-espresso-muted uppercase tracking-wider block">
+                  SYSTEM CONSTRAINTS
+                </span>
+                <h4 class="font-mono text-sm font-semibold text-espresso-850 dark:text-[#EDEDEC]">
+                  Strict Resource Bounds
+                </h4>
+                <p class="text-xs text-espresso-850/80 dark:text-[#C4BEB7] leading-relaxed">
+                  Benchmarked under a restricted 2GB RAM container sandbox to simulate realistic resource-constrained edge deployments. Required sub-50ms P95 query responses while supporting substring and prefix lookups.
+                </p>
+              </div>
+            </div>
+
+            <!-- KEY TECHNICAL DECISIONS & TRADE-OFFS (Structured Bulleted Decision Logs) -->
+            <div class="space-y-4">
+              <h4 class="font-mono text-xs uppercase tracking-widest text-espresso-muted">
+                KEY TECHNICAL DECISIONS &amp; TRADE-OFFS LOG
+              </h4>
+              
+              <ul class="space-y-3 font-sans text-xs">
+                <li class="p-3.5 border-l-2 border-espresso-850 dark:border-[#EDEDEC] bg-linen-200/40 dark:bg-espresso-800/40 space-y-1">
+                  <div class="font-mono font-semibold text-espresso-850 dark:text-[#EDEDEC]">
+                    [DECISION 01] GiST vs GIN Index Selection for Trigrams
+                  </div>
+                  <p class="text-espresso-850/80 dark:text-[#C4BEB7] leading-relaxed">
+                    <strong>Trade-off:</strong> Opted for GIN indexes over GiST for production read paths. While GIN incurs a 2.8x higher write time penalty during batch insertion, query lookup latency dropped from 124ms to 14ms across fuzzy substring searches.
+                  </p>
+                </li>
+
+                <li class="p-3.5 border-l-2 border-espresso-850 dark:border-[#EDEDEC] bg-linen-200/40 dark:bg-espresso-800/40 space-y-1">
+                  <div class="font-mono font-semibold text-espresso-850 dark:text-[#EDEDEC]">
+                    [DECISION 02] Hybrid Tiering: Postgres FTS for Primary + Elasticsearch Sync
+                  </div>
+                  <p class="text-espresso-850/80 dark:text-[#C4BEB7] leading-relaxed">
+                    <strong>Trade-off:</strong> Evaluated operational complexity against query performance. For catalog sizes below 250,000 records, standard PostgreSQL tsvector full-text search eliminated the need for external sync clusters, reducing architectural failure modes by 50%.
+                  </p>
+                </li>
+
+                <li class="p-3.5 border-l-2 border-espresso-850 dark:border-[#EDEDEC] bg-linen-200/40 dark:bg-espresso-800/40 space-y-1">
+                  <div class="font-mono font-semibold text-espresso-850 dark:text-[#EDEDEC]">
+                    [DECISION 03] Client-Side Buffering &amp; Debounce Serialization
+                  </div>
+                  <p class="text-espresso-850/80 dark:text-[#C4BEB7] leading-relaxed">
+                    <strong>Trade-off:</strong> Implemented a 150ms token-bucket debounce filter before firing backend query streams, cutting redundant uncommitted database reads by 64% during active typing.
+                  </p>
+                </li>
+              </ul>
+            </div>
+
+            <!-- TECHNOLOGIES USED: Pill Badges -->
+            <div class="pt-4 border-t border-linen-border dark:border-espresso-border space-y-3">
+              <span class="font-mono text-xs uppercase tracking-widest text-espresso-muted block">
+                TECHNOLOGIES UTILIZED
+              </span>
+              <div class="flex flex-wrap gap-2 font-mono text-xs">
+                <span class="px-2.5 py-1 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">PostgreSQL 16 (pg_trgm)</span>
+                <span class="px-2.5 py-1 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Elasticsearch 8.x</span>
+                <span class="px-2.5 py-1 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Node.js Stream API</span>
+                <span class="px-2.5 py-1 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">Docker Engine</span>
+                <span class="px-2.5 py-1 bg-linen-200 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border dark:border-espresso-border">k6 Load Testing</span>
+              </div>
+            </div>
+
+            <!-- BACK TO PROJECTS LINK -->
+            <div class="pt-6 border-t border-linen-border dark:border-espresso-border flex justify-between items-center font-mono text-xs">
+              <button onclick="closeCaseStudy()" class="font-semibold text-espresso-850 dark:text-[#EDEDEC] hover:underline">
+                ← RETURN TO PROJECTS
+              </button>
+              <span class="text-espresso-muted">END OF REPORT</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+           SECTION E: SKILLS (Compact Categorized Pill Layout)
+           ==================================================== -->
+      <section id="skills" class="scroll-mt-16">
+        <!-- Section Tracker Tag -->
+        <div class="flex items-center gap-3 font-mono text-xs tracking-widest text-espresso-muted dark:text-[#8E877F] uppercase mb-8">
+          <span class="">[ 04 // TECHNICAL COMPETENCIES &amp; TOOLKIT ]</span>
+          <div class="h-px flex-1 bg-linen-border/70 dark:bg-espresso-border"></div>
+          <span class="">SPEC.SKILLS</span>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="font-editorial text-3xl sm:text-4xl text-espresso-850 dark:text-[#EDEDEC]">
+            Core Technical Stack
+          </h3>
+          <p class="font-sans text-sm text-espresso-muted dark:text-[#9A948D] mt-1">
+            Compact categorization organized by runtime layer and architectural responsibility.
+          </p>
+        </div>
+
+        <!-- Categorized Compact Inline Pill Layout to optimize vertical space -->
+        <div class="border border-linen-border dark:border-espresso-border bg-linen-50/50 dark:bg-espresso-850/50 divide-y divide-linen-border dark:divide-espresso-border">
+          
+          <!-- Backend & Systems -->
+          <div class="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <div class="md:col-span-4 font-mono text-xs">
+              <span class="text-espresso-muted tracking-widest block text-[10px] uppercase">LAYER 01</span>
+              <span class="font-bold text-sm text-espresso-850 dark:text-[#EDEDEC]">Backend &amp; Systems</span>
+            </div>
+            <div class="md:col-span-8 flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Node.js</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Redis</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">PostgreSQL</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Elasticsearch</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Redis Streams</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Distributed Systems</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">REST APIs</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">WebSockets</span>
+            </div>
+          </div>
+
+          <!-- Frontend -->
+          <div class="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <div class="md:col-span-4 font-mono text-xs">
+              <span class="text-espresso-muted tracking-widest block text-[10px] uppercase">LAYER 02</span>
+              <span class="font-bold text-sm text-espresso-850 dark:text-[#EDEDEC]">Frontend Architecture</span>
+            </div>
+            <div class="md:col-span-8 flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">React</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Next.js</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">TypeScript</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Tailwind CSS</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">State Management (Zustand/Redux)</span>
+            </div>
+          </div>
+
+          <!-- DevOps & Tools -->
+          <div class="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <div class="md:col-span-4 font-mono text-xs">
+              <span class="text-espresso-muted tracking-widest block text-[10px] uppercase">LAYER 03</span>
+              <span class="font-bold text-sm text-espresso-850 dark:text-[#EDEDEC]">DevOps &amp; Infrastructure</span>
+            </div>
+            <div class="md:col-span-8 flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Docker</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Git</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">CI/CD Pipelines</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Linux (Debian/Ubuntu)</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Postman / OpenAPI</span>
+            </div>
+          </div>
+
+          <!-- CS Foundations -->
+          <div class="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <div class="md:col-span-4 font-mono text-xs">
+              <span class="text-espresso-muted tracking-widest block text-[10px] uppercase">LAYER 04</span>
+              <span class="font-bold text-sm text-espresso-850 dark:text-[#EDEDEC]">CS Foundations</span>
+            </div>
+            <div class="md:col-span-8 flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Data Structures &amp; Algorithms</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Database Indexing (B-Tree/GIN/Hash)</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">Concurrency &amp; Mutexes</span>
+              <span class="px-2.5 py-1 font-mono text-xs rounded-none bg-linen-200/80 dark:bg-espresso-800 text-espresso-850 dark:text-[#EDEDEC] border border-linen-border/70 dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] transition">System Design &amp; CAP Trade-offs</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================
+           SECTION F: CONTACT SECTION (Streamlined Direct Layout)
+           ==================================================== -->
+      <section id="contact" class="scroll-mt-16 pb-12">
+        <!-- Section Tracker Tag -->
+        <div class="flex items-center gap-3 font-mono text-xs tracking-widest text-espresso-muted dark:text-[#8E877F] uppercase mb-8">
+          <span class="">[ 05 // TRANSMISSION &amp; INQUIRIES ]</span>
+          <div class="h-px flex-1 bg-linen-border/70 dark:bg-espresso-border"></div>
+          <span class="">INIT.CONNECT</span>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="font-editorial text-3xl sm:text-4xl text-espresso-850 dark:text-[#EDEDEC]">
+            Initiate Contact
+          </h3>
+          <p class="font-sans text-sm text-espresso-muted dark:text-[#9A948D] mt-1">
+            Available for software engineering roles, distributed systems challenges, and technical consults.
+          </p>
+        </div>
+
+        <!-- Streamlined direct 2-column layout (no redundant quote cards) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          
+          <!-- Left: Clean Functional Message Form -->
+          <div class="lg:col-span-7 border border-linen-border dark:border-espresso-border bg-linen-50/70 dark:bg-espresso-850/70 p-6 sm:p-8">
+            <div class="font-mono text-xs text-espresso-muted mb-6 flex justify-between">
+              <span class="">DISPATCH FORM // SECURE PORT</span>
+              <span class="">ENCRYPT: TLS 1.3</span>
+            </div>
+
+            <form onsubmit="handleFormSubmit(event)" class="space-y-5" id="contact-form">
+              <!-- Name -->
+              <div>
+                <label for="contact-name" class="block font-mono text-xs text-espresso-850 dark:text-[#EDEDEC] uppercase mb-1.5">
+                  Name / Identifier <span class="text-rose-600">*</span>
+                </label>
+                <input type="text" id="contact-name" required="" placeholder="e.g. Elena Rostova" class="w-full px-3.5 py-2.5 bg-linen-100 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border text-espresso-850 dark:text-[#EDEDEC] text-sm font-sans focus:outline-none focus:border-espresso-850 dark:focus:border-white transition">
+              </div>
+
+              <!-- Email -->
+              <div>
+                <label for="contact-email" class="block font-mono text-xs text-espresso-850 dark:text-[#EDEDEC] uppercase mb-1.5">
+                  Email Address <span class="text-rose-600">*</span>
+                </label>
+                <input type="email" id="contact-email" required="" placeholder="elena@engineering.co" class="w-full px-3.5 py-2.5 bg-linen-100 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border text-espresso-850 dark:text-[#EDEDEC] text-sm font-sans focus:outline-none focus:border-espresso-850 dark:focus:border-white transition">
+              </div>
+
+              <!-- Message -->
+              <div>
+                <label for="contact-msg" class="block font-mono text-xs text-espresso-850 dark:text-[#EDEDEC] uppercase mb-1.5">
+                  Project Scope or Message <span class="text-rose-600">*</span>
+                </label>
+                <textarea id="contact-msg" rows="4" required="" placeholder="Tell me about your tech stack, system requirements, or upcoming opportunities..." class="w-full px-3.5 py-2.5 bg-linen-100 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border text-espresso-850 dark:text-[#EDEDEC] text-sm font-sans focus:outline-none focus:border-espresso-850 dark:focus:border-white transition resize-none"></textarea>
+              </div>
+
+              <!-- Submit CTA -->
+              <div class="pt-2 flex items-center justify-between">
+                <button type="submit" id="submit-btn" class="inline-flex items-center gap-2 px-6 py-3 font-mono text-xs font-semibold tracking-wider uppercase bg-espresso-850 text-linen-50 dark:bg-[#EDEDEC] dark:text-espresso-950 hover:opacity-90 transition border border-espresso-850 dark:border-white shadow-xs">
+                  <span id="submit-text" class="">DISPATCH MESSAGE</span>
+                  <span class="">→</span>
+                </button>
+                <span id="form-feedback" class="font-mono text-xs text-emerald-600 dark:text-emerald-400 hidden">
+                  ✓ TRANSMISSION QUEUED
+                </span>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right: Contact Details, Direct Email Copy Action, Status -->
+          <div class="lg:col-span-5 flex flex-col justify-between space-y-6">
+            
+            <!-- Direct Email Action Box -->
+            <div class="p-6 border border-linen-border dark:border-espresso-border bg-linen-50/70 dark:bg-espresso-850/70 space-y-3">
+              <span class="font-mono text-[10px] text-espresso-muted tracking-widest uppercase block">
+                DIRECT ELECTRONIC MAIL
+              </span>
+              <div class="font-mono text-sm sm:text-base font-semibold text-espresso-850 dark:text-[#EDEDEC] break-all">
+                arjun.engineering@proton.me
+              </div>
+              <p class="text-xs text-espresso-muted leading-relaxed">
+                Preferred for technical queries, offer discussions, and architectural reviews.
+              </p>
+              
+              <button onclick="copyEmail()" id="contact-copy-btn" class="w-full py-2.5 px-4 font-mono text-xs font-medium uppercase border border-linen-border dark:border-espresso-border hover:border-espresso-850 dark:hover:border-[#EDEDEC] bg-linen-100 dark:bg-espresso-900 transition flex items-center justify-center gap-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                </svg>
+                <span id="contact-copy-text" class="">COPY EMAIL TO CLIPBOARD</span>
+              </button>
+            </div>
+
+            <!-- Current Status Box -->
+            <div class="p-6 border border-linen-border dark:border-espresso-border bg-linen-50/70 dark:bg-espresso-850/70 space-y-3">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-espresso-muted tracking-widest uppercase text-[10px]">CURRENT OPERATING STATUS</span>
+                <span class="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold text-[11px]">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> ACTIVE
+                </span>
+              </div>
+              <p class="font-sans text-xs text-espresso-850/90 dark:text-[#D1CBC5] leading-relaxed">
+                Actively interviewing for full-time Software Engineering roles (Full Stack / Backend Systems). Open to on-site roles in NCR/Bengaluru and remote global teams.
+              </p>
+              <div class="pt-3 border-t border-linen-border/60 dark:border-espresso-border/60 font-mono text-xs text-espresso-muted space-y-1">
+                <div class="flex justify-between">
+                  <span class="">LOCATION:</span>
+                  <span class="text-espresso-850 dark:text-[#EDEDEC]">Noida / Delhi, India</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="">PRIMARY STACK:</span>
+                  <span class="text-espresso-850 dark:text-[#EDEDEC]">Node, Postgres, Redis, React</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Telemetry Stamp -->
+            <div class="font-mono text-[10px] text-espresso-muted border-l-2 border-linen-border dark:border-espresso-border pl-3 space-y-0.5">
+              <div class="">LATENCY: 14ms (EDGE REPLICA)</div>
+              <div class="">LOC: 28.5355° N, 77.3910° E (UTC+5:30)</div>
+              <div class="">DEPLOYED VIA STATIC CI CONTAINER</div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Bottom Footer Line -->
+      <footer class="pt-10 border-t border-linen-border dark:border-espresso-border flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-espresso-muted space-y-2 sm:space-y-0">
+        <div class="">ARJUN // SYSTEMS &amp; FULL STACK PORTFOLIO</div>
+        <div class="">DESIGNED IN TECHNICAL EDITORIAL STYLE</div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ========================================================
+       CLIENT INTERACTIVITY SCRIPT (Theme Toggle, Modals, Nav Spy)
+       ======================================================== -->
+  <script>
+    // 1. Theme Management (Tactile Rocker Switch)
+    function setTheme(theme) {
+      const html = document.documentElement;
+      const lightBtn = document.getElementById('theme-light-btn');
+      const darkBtn = document.getElementById('theme-dark-btn');
+
+      if (theme === 'dark') {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    // Initialize Theme on load
+    (function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        // default to light mode to show off linen aesthetic first, or respect dark
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+
+    // 2. Mobile Menu Toggle
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobile-drawer');
+      const hamburger = document.getElementById('hamburger-icon');
+      const close = document.getElementById('close-icon');
+
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        hamburger.classList.add('hidden');
+        close.classList.remove('hidden');
+      } else {
+        drawer.classList.add('hidden');
+        hamburger.classList.remove('hidden');
+        close.classList.add('hidden');
+      }
+    }
+
+    // 3. Email Clipboard Utility
+    function copyEmail() {
+      const email = 'arjun.engineering@proton.me';
+      navigator.clipboard.writeText(email).then(() => {
+        const heroBtnText = document.getElementById('hero-copy-text');
+        const contactBtnText = document.getElementById('contact-copy-text');
+
+        if (heroBtnText) heroBtnText.innerText = 'COPIED TO CLIPBOARD!';
+        if (contactBtnText) contactBtnText.innerText = 'COPIED: arjun.engineering@proton.me';
+
+        setTimeout(() => {
+          if (heroBtnText) heroBtnText.innerText = 'COPY EMAIL';
+          if (contactBtnText) contactBtnText.innerText = 'COPY EMAIL TO CLIPBOARD';
+        }, 2500);
+      }).catch(err => {
+        alert('Email: ' + email);
+      });
+    }
+
+    // 4. Contact Form Simulated Dispatch
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const feedback = document.getElementById('form-feedback');
+      const form = document.getElementById('contact-form');
+
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+
+      setTimeout(() => {
+        feedback.classList.remove('hidden');
+        form.reset();
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.classList.remove('opacity-50');
+          feedback.classList.add('hidden');
+        }, 3500);
+      }, 600);
+    }
+
+    // 5. Case Study Modal Data & Handlers
+    const projectCaseStudies = {
+      'search-test': {
+        ref: 'ARCH.SPEC // PRJ-01',
+        badge: 'BENCHMARK COMPLETE',
+        title: 'Search-test: PostgreSQL Trigrams vs Elasticsearch',
+        desc: 'An interactive search benchmarking lab comparing PostgreSQL Trigrams, Postgres FTS, and Elasticsearch across 100,000 documents under concurrent query pressure.',
+        challengeTitle: 'Index Bloat vs Typo Tolerance',
+        challenge: 'PostgreSQL Trigram (pg_trgm) indexing excels at fuzzy character-level matching but exhibits significant memory expansion and heavy CPU locking during high-frequency writes. The system needed deterministic latency comparisons against dedicated Lucene inverted indexes.',
+        constraintsTitle: 'Strict Resource Bounds',
+        constraints: 'Benchmarked under a restricted 2GB RAM container sandbox to simulate realistic resource-constrained edge deployments. Required sub-50ms P95 query responses while supporting substring and prefix lookups.',
+        decisions: [
+          {
+            title: '[DECISION 01] GiST vs GIN Index Selection for Trigrams',
+            text: 'Opted for GIN indexes over GiST for production read paths. While GIN incurs a 2.8x higher write time penalty during batch insertion, query lookup latency dropped from 124ms to 14ms across fuzzy substring searches.'
+          },
+          {
+            title: '[DECISION 02] Hybrid Tiering: Postgres FTS for Primary + Elasticsearch Sync',
+            text: 'Evaluated operational complexity against query performance. For catalog sizes below 250,000 records, standard PostgreSQL tsvector full-text search eliminated the need for external sync clusters, reducing architectural failure modes by 50%.'
+          },
+          {
+            title: '[DECISION 03] Client-Side Buffering & Debounce Serialization',
+            text: 'Implemented a 150ms token-bucket debounce filter before firing backend query streams, cutting redundant uncommitted database reads by 64% during active typing.'
+          }
+        ],
+        tags: ['PostgreSQL 16 (pg_trgm)', 'Elasticsearch 8.x', 'Node.js Stream API', 'Docker Engine', 'k6 Load Testing']
+      },
+      'job-queue': {
+        ref: 'ARCH.SPEC // PRJ-02',
+        badge: 'PROD REPLICA READY',
+        title: 'Distributed Job-Queue Engine',
+        desc: 'Engineered a distributed background job processing engine with Node.js, Redis Streams, and PostgreSQL to decouple ingestion from asynchronous worker execution.',
+        challengeTitle: 'Decoupled Worker Scalability',
+        challenge: 'High bursts of asynchronous jobs were overwhelming single-threaded event loops, leading to memory exhaustion and lost execution states upon unhandled process termination.',
+        constraintsTitle: 'At-Least-Once Delivery Semantics',
+        constraints: 'Guaranteed message durability with consumer group acknowledging (XACK), pending entry list (PEL) monitoring for dead worker recovery, and automatic exponential backoff retries.',
+        decisions: [
+          {
+            title: '[DECISION 01] Redis Streams Consumer Groups Over Simple Lists',
+            text: 'Selected Redis Streams over Redis LPUSH/RPOP due to built-in PEL (Pending Entry List) inspection and explicit consumer assignment, preventing silent worker task dropouts.'
+          },
+          {
+            title: '[DECISION 02] Idempotency Keys in PostgreSQL Outbox Table',
+            text: 'Enforced unique task UUIDs indexed with transactional isolation to guarantee zero duplicate database writes even during aggressive network partition retries.'
+          },
+          {
+            title: '[DECISION 03] Dynamic Worker Thread Autoscaling',
+            text: 'Created an autonomous worker daemon that scales child threads based on real-time stream lag metrics, cutting queue buildup by 78% during peak ingestion windows.'
+          }
+        ],
+        tags: ['Node.js', 'Redis Streams', 'PostgreSQL', 'Docker Compose', 'Distributed Systems']
+      },
+      'nexus': {
+        ref: 'ARCH.SPEC // PRJ-03',
+        badge: 'STABLE v1.2',
+        title: 'Nexus: Distributed Document Engine',
+        desc: 'High-performance collaborative workspace and distributed document engine with zero-conflict real-time state synchronization and delta compression.',
+        challengeTitle: 'Multi-User State Divergence',
+        challenge: 'Synchronizing rich text documents across clients experiencing intermittent packet drops and network partitions without central database bottlenecking.',
+        constraintsTitle: 'Sub-25ms Broadcast Latency',
+        constraints: 'Every mutation delta must propagate to all active peers within 25 milliseconds while keeping the memory footprint under 45MB per active room.',
+        decisions: [
+          {
+            title: '[DECISION 01] Conflict-Free Replicated Data Types (CRDT)',
+            text: 'Implemented state-based CRDT logic allowing mathematically verifiable eventual consistency without requiring server-enforced locks.'
+          },
+          {
+            title: '[DECISION 02] Binary Delta Protocol via WebSockets',
+            text: 'Replaced verbose JSON messaging with a compact binary serialization protocol, reducing bandwidth usage by 73% across concurrent editing sessions.'
+          }
+        ],
+        tags: ['TypeScript', 'WebSockets', 'React', 'Zustand', 'CRDT Engine']
+      },
+      'rate-limiter': {
+        ref: 'ARCH.SPEC // PRJ-04',
+        badge: 'ZERO-LEAK ALGORITHM',
+        title: 'Distributed Token-Bucket Rate Limiter',
+        desc: 'Distributed token-bucket rate limiter with sliding log support implemented using atomic Redis Lua scripts to eliminate race conditions under distributed traffic bursts.',
+        challengeTitle: 'Atomic Evaluation Under Concurrency',
+        challenge: 'Standard GET-and-SET rate limiters produce severe race conditions under simultaneous requests across multiple API server instances, allowing burst overages.',
+        constraintsTitle: 'Sub-Millisecond Overhead',
+        constraints: 'Enforced strict sub-0.5ms evaluation overhead per incoming HTTP request at the reverse proxy gateway to prevent adding perceptible user latency.',
+        decisions: [
+          {
+            title: '[DECISION 01] Single-Turn Redis Lua Scripting',
+            text: 'Bundled token bucket consumption into a single atomic Lua script executed inside Redis, guaranteeing total linearizability without distributed mutex locks.'
+          },
+          {
+            title: '[DECISION 02] Sliding Window Log for High-Sensitivity Endpoints',
+            text: 'Integrated dual strategies: cheap token buckets for general API routes, and sliding logs with microsecond sorted sets for sensitive financial and authentication endpoints.'
+          }
+        ],
+        tags: ['Redis Lua', 'Node.js', 'System Security', 'Concurrency Control']
+      }
+    };
+
+    function openCaseStudy(projectId) {
+      const data = projectCaseStudies[projectId];
+      if (!data) return;
+
+      document.getElementById('modal-case-badge').innerText = data.badge;
+      document.getElementById('modal-case-ref').innerText = data.ref;
+      document.getElementById('modal-case-title').innerText = data.title;
+      document.getElementById('modal-case-desc').innerText = data.desc;
+
+      const modal = document.getElementById('case-study-modal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCaseStudy(e) {
+      const modal = document.getElementById('case-study-modal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Close modal on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeCaseStudy();
+    });
+
+    // 6. Navigation Active Spy for Left Sidebar
+    window.addEventListener('scroll', () => {
+      const sections = ['home', 'about', 'experience', 'projects', 'skills', 'contact'];
+      const scrollPos = window.scrollY + 200;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const sec = document.getElementById(sections[i]);
+        if (sec && sec.offsetTop <= scrollPos) {
+          updateSidebarActive(sections[i]);
+          break;
+        }
+      }
+    });
+
+    function updateSidebarActive(activeId) {
+      const links = document.querySelectorAll('#sidebar-nav .nav-link');
+      links.forEach(link => {
+        const target = link.getAttribute('data-target');
+        const indicator = link.querySelector('.indicator');
+        if (target === activeId || (activeId === 'home' && target === 'home')) {
+          link.classList.add('border-espresso-850', 'dark:border-[#EDEDEC]', 'bg-linen-200/60', 'dark:bg-espresso-800/60', 'text-espresso-850', 'dark:text-[#EDEDEC]', 'font-semibold');
+          link.classList.remove('border-transparent', 'text-espresso-muted', 'dark:text-[#9A948D]');
+          if (indicator) {
+            indicator.classList.add('bg-espresso-850', 'dark:bg-[#EDEDEC]');
+            indicator.classList.remove('bg-transparent');
+          }
+        } else {
+          link.classList.remove('border-espresso-850', 'dark:border-[#EDEDEC]', 'bg-linen-200/60', 'dark:bg-espresso-800/60', 'text-espresso-850', 'dark:text-[#EDEDEC]', 'font-semibold');
+          link.classList.add('border-transparent', 'text-espresso-muted', 'dark:text-[#9A948D]');
+          if (indicator) {
+            indicator.classList.remove('bg-espresso-850', 'dark:bg-[#EDEDEC]');
+            indicator.classList.add('bg-transparent');
+          }
+        }
+      });
+    }
+  </script>
+
+
+
+
+</body></html>
