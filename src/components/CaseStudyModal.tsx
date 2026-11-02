@@ -1,27 +1,18 @@
-import React, { useEffect } from 'react';
-import { ArrowLeft, ExternalLink, X } from 'lucide-react';
-import type { LoadTier, ProjectItem } from '../data/portfolioData';
-import { computeBenchmarkSummary } from '../utils/portfolioLogic';
+import React, { useEffect, useState } from 'react';
+import { ArrowLeft, Check, Copy, ExternalLink, Github, X } from 'lucide-react';
+import type { ProjectItem } from '../data/portfolioData';
 
 interface CaseStudyModalProps {
   project: ProjectItem | null;
-  loadTier: LoadTier;
-  onChangeLoadTier: (tier: LoadTier) => void;
   onClose: () => void;
 }
 
-const LOAD_TIERS: { id: LoadTier; label: string }[] = [
-  { id: 'baseline', label: '1x Baseline Load' },
-  { id: 'burst', label: '10x Burst Load' },
-  { id: 'stress', label: '50x Stress Load' },
-];
-
 export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
   project,
-  loadTier,
-  onChangeLoadTier,
   onClose,
 }) => {
+  const [copiedCodeIdx, setCopiedCodeIdx] = useState<number | null>(null);
+
   useEffect(() => {
     if (!project) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,271 +28,326 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
     };
   }, [project, onClose]);
 
-  if (!project) return null;
+  if (!project || !project.caseStudy) return null;
 
-  const benchSummary = computeBenchmarkSummary(project, loadTier);
+  const { caseStudy } = project;
+
+  const handleCopyCode = (code: string, idx: number) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code).catch(() => {});
+    }
+    setCopiedCodeIdx(idx);
+    setTimeout(() => setCopiedCodeIdx(null), 2000);
+  };
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-espresso-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 md:p-10 flex justify-center items-start"
+      className="fixed inset-0 z-50 bg-espresso-950/80 backdrop-blur-sm p-4 sm:p-6 md:p-8 flex items-center justify-center"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-case-title"
     >
       <div
-        className="bg-linen-100 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border w-full max-w-4xl shadow-2xl my-auto animate-fade-up"
+        className="bg-linen-100 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-          {/* Sticky Modal Header Bar */}
-          <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-linen-border dark:border-espresso-border bg-linen-100/95 dark:bg-espresso-900/95 backdrop-blur-md">
-            <button
-              type="button"
-              onClick={onClose}
-              className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-[#EDEDEC] inline-flex items-center gap-2 cursor-pointer"
+        {/* Fixed Modal Header Bar */}
+        <div className="shrink-0 z-10 flex items-center justify-between px-6 py-4 border-b border-linen-border dark:border-espresso-border bg-linen-100 dark:bg-espresso-900">
+          <button
+            type="button"
+            onClick={onClose}
+            className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-[#EDEDEC] inline-flex items-center gap-2 cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Projects Directory</span>
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close case study modal"
+            className="p-1.5 rounded hover:bg-linen-200 dark:hover:bg-espresso-800 text-espresso-muted hover:text-espresso-850 dark:hover:text-[#EDEDEC] transition-colors cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Scrollable Modal Body */}
+        <div className="flex-1 overflow-y-auto p-6 sm:p-10 space-y-10">
+          {/* Header Block */}
+          <div className="space-y-4">
+            <div className="font-mono text-xs text-espresso-muted dark:text-[#9A948D]">
+              <span>{project.category}</span>
+              <span aria-hidden="true" className="mx-2">
+                ·
+              </span>
+              <span className="text-emerald-700 dark:text-emerald-400 font-medium">
+                {project.status}
+              </span>
+            </div>
+
+            <h2
+              id="modal-case-title"
+              className="font-editorial text-3xl sm:text-5xl text-espresso-850 dark:text-[#EDEDEC] leading-tight"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Projects Directory</span>
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close case study modal"
-              className="p-1.5 rounded hover:bg-linen-200 dark:hover:bg-espresso-800 text-espresso-muted hover:text-espresso-850 dark:hover:text-[#EDEDEC] transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+              {project.title}
+            </h2>
 
-          {/* Modal Body */}
-          <div className="p-6 sm:p-10 space-y-10">
-            {/* Header Block */}
-            <div className="space-y-4">
-              <div className="font-mono text-xs text-espresso-muted dark:text-[#9A948D]">
-                <span>{project.refCode}</span>
-                <span aria-hidden="true" className="mx-2">
-                  ·
-                </span>
-                <span>{project.categoryLabel}</span>
-                <span aria-hidden="true" className="mx-2">
-                  ·
-                </span>
-                <span className="text-emerald-700 dark:text-emerald-400 font-medium">
-                  {project.statusLabel}
-                </span>
-              </div>
+            <p className="text-base text-espresso-850/85 dark:text-[#D1CBC5] max-w-3xl leading-relaxed">
+              {caseStudy.brief}
+            </p>
 
-              <h2
-                id="modal-case-title"
-                className="font-editorial text-3xl sm:text-5xl text-espresso-850 dark:text-[#EDEDEC] leading-tight"
-              >
-                {project.shortTitle}
-              </h2>
-
-              <p className="text-base text-espresso-850/85 dark:text-[#D1CBC5] max-w-2xl leading-relaxed">
-                {project.detailedDescription}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-6 pt-2 font-mono text-xs">
+            <div className="flex flex-wrap items-center gap-6 pt-2 font-mono text-xs">
+              {project.liveUrl && (
                 <a
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-espresso-850 dark:text-[#EDEDEC] font-semibold underline underline-offset-4 hover:opacity-80"
                 >
-                  <span>Live Benchmark Lab</span>
+                  <span>Live Application</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
+              )}
+              {project.githubUrl && (
                 <a
-                  href={project.repoUrl}
+                  href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-[#EDEDEC]"
                 >
+                  <Github className="w-3.5 h-3.5" />
                   <span>GitHub Repository</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
-              </div>
+              )}
+            </div>
+          </div>
+
+          {/* Challenge & Outcome Breakdown */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-5 border border-linen-border dark:border-espresso-border bg-linen-50/60 dark:bg-espresso-850/50 space-y-2">
+              <span className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] block">
+                The Engineering Challenge
+              </span>
+              <p className="text-xs sm:text-sm text-espresso-850/90 dark:text-[#C4BEB7] leading-relaxed">
+                {caseStudy.challenge}
+              </p>
             </div>
 
-            {/* Architecture Data-Flow Schematic */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center text-xs font-mono text-espresso-muted dark:text-[#9A948D]">
-                <span>System Data-Flow Architecture</span>
-                <span>4-Stage Pipeline</span>
-              </div>
-
-              <div className="p-6 bg-linen-200/50 dark:bg-espresso-950 border border-linen-border dark:border-espresso-border technical-grid">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-center font-mono text-xs">
-                  {project.flowSteps.map((step) => (
-                    <div
-                      key={step.step}
-                      className="p-4 bg-linen-50 dark:bg-espresso-850 border border-linen-border dark:border-espresso-border"
-                    >
-                      <div className="text-[11px] text-espresso-muted dark:text-[#9A948D] mb-1">
-                        {step.step}
-                      </div>
-                      <div className="font-semibold text-espresso-850 dark:text-[#EDEDEC]">
-                        {step.title}
-                      </div>
-                      <div className="text-[11px] text-espresso-muted dark:text-[#9A948D] mt-1.5">
-                        {step.subtitle}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div className="p-5 border border-linen-border dark:border-espresso-border bg-linen-50/60 dark:bg-espresso-850/50 space-y-2">
+              <span className="font-mono text-xs text-emerald-700 dark:text-emerald-400 block">
+                System Outcome
+              </span>
+              <p className="text-xs sm:text-sm text-espresso-850/90 dark:text-[#C4BEB7] leading-relaxed">
+                {caseStudy.outcome}
+              </p>
             </div>
+          </div>
 
-            {/* Interactive Latency & Throughput Benchmark Simulator */}
-            <div className="p-6 bg-linen-50/80 dark:bg-espresso-850/80 border border-linen-border dark:border-espresso-border space-y-5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <h3 className="font-mono text-xs font-semibold text-espresso-850 dark:text-[#EDEDEC]">
-                    Interactive Benchmark Telemetry (P50 / P99 Latency & Throughput)
+          {/* Architecture & Key Focus */}
+          {(caseStudy.architecture || caseStudy.keyFocus) && (
+            <div className="p-6 border border-linen-border dark:border-espresso-border bg-linen-50/70 dark:bg-espresso-850/70 space-y-4">
+              {caseStudy.architecture && (
+                <div className="space-y-1.5">
+                  <h3 className="font-mono text-xs text-espresso-muted dark:text-[#9A948D]">
+                    System Architecture Overview
                   </h3>
-                  <p className="font-sans text-xs text-espresso-muted dark:text-[#9A948D] mt-0.5">
-                    Switch concurrency load profiles to inspect empirical latency scaling.
+                  <p className="font-sans text-xs sm:text-sm text-espresso-850/90 dark:text-[#D1CBC5] leading-relaxed">
+                    {caseStudy.architecture}
                   </p>
                 </div>
+              )}
 
-                <div
-                  className="inline-flex items-center p-1 bg-linen-200 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border rounded"
-                  role="group"
-                  aria-label="Modal benchmark load tier"
-                >
-                  {LOAD_TIERS.map((tier) => (
-                    <button
-                      key={tier.id}
-                      type="button"
-                      onClick={() => onChangeLoadTier(tier.id)}
-                      aria-pressed={loadTier === tier.id}
-                      className={`px-2.5 py-1 text-xs font-mono rounded transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                        loadTier === tier.id
-                          ? 'bg-espresso-850 text-linen-50 dark:bg-[#EDEDEC] dark:text-espresso-950 font-semibold'
-                          : 'text-espresso-muted hover:text-espresso-850 dark:hover:text-white'
-                      }`}
-                    >
-                      {tier.label}
-                    </button>
-                  ))}
+              {caseStudy.keyFocus && caseStudy.keyFocus.length > 0 && (
+                <div className="pt-3 border-t border-linen-border/70 dark:border-espresso-border space-y-2">
+                  <span className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] block">
+                    Key Architectural Focus Areas
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs text-espresso-850 dark:text-[#EDEDEC]">
+                    {caseStudy.keyFocus.map((focus, idx) => (
+                      <div key={focus} className="flex items-baseline gap-2">
+                        <span className="text-espresso-muted tabular-nums">
+                          0{idx + 1}.
+                        </span>
+                        <span>{focus}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              <div className="space-y-4">
-                {benchSummary.metrics.map((metric) => {
-                  const widthPercent = Math.min(
-                    100,
-                    Math.max(10, Math.round((metric.p99Ms / benchSummary.maxP99Ms) * 100))
-                  );
-                  return (
-                    <div key={metric.label} className="space-y-1.5 font-mono text-xs">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="font-semibold text-espresso-850 dark:text-[#EDEDEC]">
-                          {metric.label}{' '}
-                          <span className="font-normal text-espresso-muted dark:text-[#9A948D]">
-                            · {metric.note}
-                          </span>
-                        </span>
-                        <span className="tabular-nums text-espresso-850 dark:text-[#EDEDEC]">
-                          P50: {metric.p50Ms}ms · P99: <strong>{metric.p99Ms}ms</strong> ·{' '}
-                          {metric.throughputRps.toLocaleString()} req/s
-                        </span>
-                      </div>
-                      <div className="h-2 w-full bg-linen-200 dark:bg-espresso-900 overflow-hidden">
-                        <div
-                          style={{ width: `${widthPercent}%` }}
-                          className="h-full bg-espresso-850 dark:bg-[#EDEDEC] transition-all duration-300 ease-out"
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              )}
             </div>
+          )}
 
-            {/* Challenge & Constraints Breakdown */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-5 border border-linen-border dark:border-espresso-border bg-linen-50/50 dark:bg-espresso-850/40 space-y-2">
-                <span className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] block">
-                  The Engineering Challenge
-                </span>
-                <h4 className="font-mono text-sm font-semibold text-espresso-850 dark:text-[#EDEDEC]">
-                  {project.challengeTitle}
-                </h4>
-                <p className="text-xs text-espresso-850/85 dark:text-[#C4BEB7] leading-relaxed">
-                  {project.challengeBody}
-                </p>
-              </div>
-
-              <div className="p-5 border border-linen-border dark:border-espresso-border bg-linen-50/50 dark:bg-espresso-850/40 space-y-2">
-                <span className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] block">
-                  System Constraints
-                </span>
-                <h4 className="font-mono text-sm font-semibold text-espresso-850 dark:text-[#EDEDEC]">
-                  {project.constraintsTitle}
-                </h4>
-                <p className="text-xs text-espresso-850/85 dark:text-[#C4BEB7] leading-relaxed">
-                  {project.constraintsBody}
-                </p>
-              </div>
-            </div>
-
-            {/* Key Technical Decisions & Trade-offs */}
+          {/* Core Approach Pillars */}
+          {caseStudy.approach && caseStudy.approach.length > 0 && (
             <div className="space-y-4">
               <h3 className="font-mono text-xs text-espresso-muted dark:text-[#9A948D]">
-                Key Technical Decisions & Architectural Trade-Offs
+                Engineering Approach
               </h3>
-
-              <ul className="space-y-3 font-sans text-xs">
-                {project.decisions.map((decision) => (
-                  <li
-                    key={decision.id}
-                    className="p-4 border border-linen-border dark:border-espresso-border bg-linen-200/35 dark:bg-espresso-800/40 space-y-1.5"
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {caseStudy.approach.map((item, idx) => (
+                  <div
+                    key={item.title}
+                    className="p-4 border border-linen-border dark:border-espresso-border bg-linen-50/50 dark:bg-espresso-850/40 space-y-1.5"
                   >
-                    <div className="font-mono font-semibold text-espresso-850 dark:text-[#EDEDEC]">
-                      {decision.title}
+                    <div className="font-mono text-[11px] text-espresso-muted tabular-nums">
+                      0{idx + 1}
                     </div>
-                    <p className="text-espresso-850/85 dark:text-[#C4BEB7] leading-relaxed">
-                      {decision.tradeoff}
+                    <h4 className="font-mono text-xs font-semibold text-espresso-850 dark:text-[#EDEDEC]">
+                      {item.title}
+                    </h4>
+                    <p className="font-sans text-xs text-espresso-850/85 dark:text-[#C4BEB7] leading-relaxed">
+                      {item.description}
                     </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Technologies Utilized (Clean Unboxed Metadata) */}
-            <div className="pt-4 border-t border-linen-border dark:border-espresso-border space-y-2">
-              <span className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] block">
-                Technologies Utilized
-              </span>
-              <div className="font-mono text-xs text-espresso-850 dark:text-[#EDEDEC]">
-                {project.tags.map((tag, idx) => (
-                  <React.Fragment key={tag}>
-                    {idx > 0 && (
-                      <span aria-hidden="true" className="mx-2 text-espresso-muted">
-                        ·
-                      </span>
-                    )}
-                    <span>{tag}</span>
-                  </React.Fragment>
+                  </div>
                 ))}
               </div>
             </div>
+          )}
 
-            {/* Modal Footer */}
-            <div className="pt-6 border-t border-linen-border dark:border-espresso-border flex justify-between items-center font-mono text-xs">
-              <button
-                type="button"
-                onClick={onClose}
-                className="font-semibold text-espresso-850 dark:text-[#EDEDEC] hover:underline cursor-pointer"
+          {/* Deep-Dive Sections (Diagrams, Tables, Code Snippets, Bullets) */}
+          <div className="space-y-8">
+            {caseStudy.sections.map((sec, secIdx) => (
+              <div
+                key={sec.heading}
+                className="p-6 border border-linen-border dark:border-espresso-border bg-linen-50/40 dark:bg-espresso-850/30 space-y-4"
               >
-                ← Return to Projects
-              </button>
-              <span className="text-espresso-muted">Architecture Specification Report</span>
+                <div className="font-mono text-xs font-semibold text-espresso-850 dark:text-[#EDEDEC]">
+                  0{secIdx + 1}. {sec.heading}
+                </div>
+
+                <p className="font-sans text-xs sm:text-sm text-espresso-850/85 dark:text-[#D1CBC5] leading-relaxed">
+                  {sec.body}
+                </p>
+
+                {sec.bullets && sec.bullets.length > 0 && (
+                  <ul className="space-y-1.5 text-xs font-sans text-espresso-850/85 dark:text-[#C4BEB7] list-disc pl-5">
+                    {sec.bullets.map((bullet) => (
+                      <li key={bullet} className="leading-relaxed">
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {sec.diagram && (
+                  <div className="space-y-2 pt-2">
+                    <div className="font-mono text-[11px] text-espresso-muted dark:text-[#9A948D]">
+                      {sec.diagram.caption}
+                    </div>
+                    <pre className="p-4 bg-linen-200/70 dark:bg-espresso-950 border border-linen-border dark:border-espresso-border font-mono text-[11px] leading-snug text-espresso-850 dark:text-[#EDEDEC] overflow-x-auto">
+                      {sec.diagram.ascii}
+                    </pre>
+                  </div>
+                )}
+
+                {sec.table && (
+                  <div className="space-y-2 pt-2">
+                    <div className="font-mono text-[11px] text-espresso-muted dark:text-[#9A948D]">
+                      {sec.table.caption}
+                    </div>
+                    <div className="overflow-x-auto border border-linen-border dark:border-espresso-border">
+                      <table className="w-full text-left font-mono text-xs border-collapse">
+                        <thead>
+                          <tr className="bg-linen-200/80 dark:bg-espresso-950 border-b border-linen-border dark:border-espresso-border">
+                            {sec.table.headers.map((header) => (
+                              <th
+                                key={header}
+                                className="p-2.5 font-semibold text-espresso-850 dark:text-[#EDEDEC] whitespace-nowrap"
+                              >
+                                {header}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-linen-border/70 dark:divide-espresso-border">
+                          {sec.table.rows.map((row, rIdx) => (
+                            <tr
+                              key={rIdx}
+                              className="bg-linen-50/70 dark:bg-espresso-900/70"
+                            >
+                              {row.map((cell, cIdx) => (
+                                <td
+                                  key={cIdx}
+                                  className="p-2.5 text-espresso-850/90 dark:text-[#D1CBC5] align-top tabular-nums"
+                                >
+                                  {cell}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {sec.codeSnippet && (
+                  <div className="space-y-2 pt-2">
+                    <div className="flex items-center justify-between font-mono text-[11px] text-espresso-muted dark:text-[#9A948D]">
+                      <span>Implementation ({sec.codeSnippet.language})</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleCopyCode(sec.codeSnippet!.code, secIdx)
+                        }
+                        className="inline-flex items-center gap-1 text-espresso-850 dark:text-[#EDEDEC] hover:underline cursor-pointer"
+                      >
+                        {copiedCodeIdx === secIdx ? (
+                          <>
+                            <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                            <span>Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3" />
+                            <span>Copy Snippet</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <pre className="p-4 bg-linen-200/70 dark:bg-espresso-950 border border-linen-border dark:border-espresso-border font-mono text-[11px] leading-relaxed text-espresso-850 dark:text-[#EDEDEC] overflow-x-auto">
+                      <code>{sec.codeSnippet.code}</code>
+                    </pre>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Technologies Utilized */}
+          <div className="pt-4 border-t border-linen-border dark:border-espresso-border space-y-2">
+            <span className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] block">
+              Technologies Utilized
+            </span>
+            <div className="flex flex-wrap items-center gap-y-1 font-mono text-xs text-espresso-850 dark:text-[#EDEDEC]">
+              {project.technologies.map((tech, idx) => (
+                <React.Fragment key={tech}>
+                  {idx > 0 && (
+                    <span aria-hidden="true" className="mx-2 text-espresso-muted">
+                      ·
+                    </span>
+                  )}
+                  <span className="whitespace-nowrap">{tech}</span>
+                </React.Fragment>
+              ))}
             </div>
+          </div>
+
+          {/* Modal Footer */}
+          <div className="pt-6 border-t border-linen-border dark:border-espresso-border flex justify-between items-center font-mono text-xs">
+            <button
+              type="button"
+              onClick={onClose}
+              className="font-semibold text-espresso-850 dark:text-[#EDEDEC] hover:underline cursor-pointer"
+            >
+              ← Return to Projects
+            </button>
+            <span className="text-espresso-muted">{project.title} Case Study</span>
           </div>
         </div>
       </div>
+    </div>
   );
 };

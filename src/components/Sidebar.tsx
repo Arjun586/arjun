@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code2, Github, Linkedin, Mail, Menu, Moon, Sun, Twitter, X } from 'lucide-react';
+import { Code2, Github, Linkedin, Mail, Menu, Moon, Sun, X } from 'lucide-react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
 
 export type SectionId = 'home' | 'about' | 'experience' | 'projects' | 'skills' | 'contact';
@@ -8,17 +8,17 @@ interface SidebarProps {
   activeSection: SectionId;
   onNavigate: (id: SectionId) => void;
   theme: 'light' | 'dark';
-  onSetTheme: (theme: 'light' | 'dark') => void;
+  onSetTheme: (theme: 'light' | 'dark', e?: React.MouseEvent<HTMLButtonElement>) => void;
   mobileMenuOpen: boolean;
   onToggleMobileMenu: () => void;
 }
 
 const NAV_ITEMS: { id: SectionId; number: string; label: string; meta: string }[] = [
   { id: 'home', number: '01', label: 'Overview', meta: 'Root' },
-  { id: 'about', number: '02', label: 'About & Reading', meta: 'Bio' },
-  { id: 'experience', number: '03', label: 'Experience', meta: 'Growth' },
-  { id: 'projects', number: '04', label: 'Projects', meta: '11 Works' },
-  { id: 'skills', number: '05', label: 'Skills & CS', meta: 'Stack' },
+  { id: 'about', number: '02', label: 'About', meta: 'Bio' },
+  { id: 'projects', number: '03', label: 'Projects', meta: `${PORTFOLIO_DATA.projects.length} Works` },
+  { id: 'skills', number: '04', label: 'Skills & CS', meta: 'Stack' },
+  { id: 'experience', number: '05', label: 'Experience', meta: 'Growth' },
   { id: 'contact', number: '06', label: 'Contact', meta: 'Mail' },
 ];
 
@@ -30,7 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   mobileMenuOpen,
   onToggleMobileMenu,
 }) => {
-  const { personal, education, contact } = PORTFOLIO_DATA;
+  const { personal, contact } = PORTFOLIO_DATA;
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: SectionId) => {
     e.preventDefault();
@@ -47,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {/* Top-Right Tactile Theme Rocker Switch (Desktop) */}
-      <div className="fixed top-4 right-5 z-50 hidden md:flex items-center gap-3">
+      <div className="fixed top-4 right-5 z-40 hidden md:flex items-center gap-3">
         <div
           className="inline-flex items-center p-1 rounded-lg bg-linen-200/95 dark:bg-espresso-800/95 border border-linen-border dark:border-espresso-border backdrop-blur-md shadow-xs"
           role="group"
@@ -55,29 +55,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           <button
             type="button"
-            onClick={() => onSetTheme('light')}
+            onClick={(e) => onSetTheme('light', e)}
             aria-pressed={theme === 'light'}
-            className={`px-3 py-1.5 text-xs font-mono font-medium rounded-md transition-all duration-150 flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
+            aria-label="Switch to light theme"
+            className={`p-2 text-xs font-mono font-medium rounded-md transition-all duration-150 flex items-center justify-center shrink-0 cursor-pointer ${
               theme === 'light'
                 ? 'bg-espresso-850 text-linen-50 shadow-xs'
                 : 'text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-[#EDEDEC]'
             }`}
           >
-            <Sun className="w-3.5 h-3.5" />
-            <span>Linen</span>
+            <Sun className="w-4 h-4" />
           </button>
           <button
             type="button"
-            onClick={() => onSetTheme('dark')}
+            onClick={(e) => onSetTheme('dark', e)}
             aria-pressed={theme === 'dark'}
-            className={`px-3 py-1.5 text-xs font-mono font-medium rounded-md transition-all duration-150 flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
+            aria-label="Switch to dark theme"
+            className={`p-2 text-xs font-mono font-medium rounded-md transition-all duration-150 flex items-center justify-center shrink-0 cursor-pointer ${
               theme === 'dark'
                 ? 'bg-linen-100 text-espresso-900 shadow-xs'
                 : 'text-espresso-muted hover:text-espresso-850 dark:hover:text-[#EDEDEC]'
             }`}
           >
-            <Moon className="w-3.5 h-3.5" />
-            <span>Espresso</span>
+            <Moon className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -95,20 +95,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
-            onClick={() => onSetTheme(theme === 'light' ? 'dark' : 'light')}
-            aria-label={theme === 'light' ? 'Switch to Espresso dark theme' : 'Switch to Linen light theme'}
-            className="px-2.5 py-2 text-xs font-mono border border-linen-border dark:border-espresso-border bg-linen-50 dark:bg-espresso-850 text-espresso-850 dark:text-[#EDEDEC] flex items-center gap-1.5 whitespace-nowrap shrink-0"
+            onClick={(e) => onSetTheme(theme === 'light' ? 'dark' : 'light', e)}
+            aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
+            className="p-2 text-xs font-mono border border-linen-border dark:border-espresso-border bg-linen-50 dark:bg-espresso-850 text-espresso-850 dark:text-[#EDEDEC] flex items-center justify-center shrink-0 cursor-pointer"
           >
             {theme === 'light' ? (
-              <>
-                <Moon className="w-3.5 h-3.5" />
-                <span>Espresso</span>
-              </>
+              <Moon className="w-4 h-4" />
             ) : (
-              <>
-                <Sun className="w-3.5 h-3.5" />
-                <span>Linen</span>
-              </>
+              <Sun className="w-4 h-4" />
             )}
           </button>
 
@@ -174,7 +168,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         {/* Top Brandmark & Specification */}
         <div>
-          <div className="flex items-baseline justify-between mb-1">
+          <div className="mb-1">
             <a
               href="#home"
               onClick={(e) => handleNavClick(e, 'home')}
@@ -184,18 +178,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {personal.name}
               </span>
             </a>
-            <span className="text-xs font-mono text-espresso-muted dark:text-[#9A948D] tabular-nums">
-              {education.period}
-            </span>
           </div>
           <p className="font-mono text-xs text-espresso-muted dark:text-[#9A948D]">
             {personal.title}
           </p>
 
           <div className="mt-5 pt-4 border-t border-linen-border/70 dark:border-espresso-border text-xs font-mono text-espresso-muted dark:text-[#8E877F] space-y-2">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-2">
               <span className="shrink-0">Status</span>
-              <span className="text-emerald-700 dark:text-emerald-400 font-medium text-right truncate">
+              <span className="text-emerald-700 dark:text-emerald-400 font-medium text-right whitespace-nowrap text-[11px]">
                 {personal.availability}
               </span>
             </div>
@@ -209,10 +200,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Middle Section Navigation */}
-        <nav aria-label="Section index" className="my-auto py-6">
-          <p className="text-xs font-mono text-espresso-muted dark:text-[#8E877F] mb-3 px-3">
-            Section Index
-          </p>
+        <nav aria-label="Portfolio navigation" className="my-auto py-6">
           <ul className="space-y-1 font-mono text-xs">
             {NAV_ITEMS.map((item) => {
               const isActive = activeSection === item.id;
@@ -265,15 +253,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className="p-2 rounded-md hover:bg-linen-200 dark:hover:bg-espresso-800 transition-colors text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-white"
             >
               <Linkedin className="w-4 h-4" />
-            </a>
-            <a
-              href={contact.socialLinks.x}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="X Twitter profile"
-              className="p-2 rounded-md hover:bg-linen-200 dark:hover:bg-espresso-800 transition-colors text-espresso-muted dark:text-[#9A948D] hover:text-espresso-850 dark:hover:text-white"
-            >
-              <Twitter className="w-4 h-4" />
             </a>
             <a
               href={contact.socialLinks.leetcode}

@@ -7,13 +7,16 @@ import {
   validateContactSubmission,
 } from './portfolioLogic';
 
-test('filterProjects returns all 11 projects when category is All', () => {
+test('filterProjects returns all 12 projects with featured projects on top when category is All', () => {
   const result = filterProjects(PORTFOLIO_DATA.projects, {
     category: 'All',
     searchQuery: '',
   });
-  assert.equal(result.length, 11);
-  assert.equal(result[0].title, 'Nexus');
+  assert.equal(result.length, 12);
+  assert.deepEqual(
+    result.slice(0, 4).map((p) => p.title),
+    ['Nexus', 'Rate Limiter', 'Search-Test', 'Distributed Job-Queue']
+  );
 });
 
 test('filterProjects returns the 4 featured projects when category is Featured', () => {
@@ -61,19 +64,16 @@ test('validateContactSubmission rejects invalid fields and accepts valid input',
   const invalid = validateContactSubmission({
     name: 'A',
     email: 'invalid-email',
-    topic: '',
     message: 'Too short',
   });
   assert.equal(invalid.valid, false);
   assert.ok(invalid.errors.name);
   assert.ok(invalid.errors.email);
-  assert.ok(invalid.errors.topic);
   assert.ok(invalid.errors.message);
 
   const valid = validateContactSubmission({
     name: 'Arjun Test',
     email: 'test@example.com',
-    topic: 'Full Stack Development',
     message: 'Looking to collaborate on a full-stack web application project.',
   });
   assert.equal(valid.valid, true);

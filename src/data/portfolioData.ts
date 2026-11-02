@@ -139,7 +139,6 @@ export interface ContactData {
   socialLinks: {
     github: string;
     linkedin: string;
-    x: string;
     leetcode: string;
     email: string;
   };
@@ -179,7 +178,7 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
     title: 'Full Stack Developer',
     discipline: 'CSE Student • Full-Stack Development & Backend Systems',
     location: 'India',
-    availability: 'Open to Internships',
+    availability: 'Open to Work',
     heroBio: 'Building software with clarity, purpose, and craft.',
     aboutBio: [
       'I approach software development with a focus on clarity, usability, and attention to detail. Whether building backend systems or refining user experiences, I value purposeful design and thoughtful execution.',
@@ -244,39 +243,29 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
     ],
     growthTimeline: [
       {
-        period: '2026 – PRESENT',
-        title: 'ENGINEERING & INFRASTRUCTURE',
+        period: '2026 – CURRENT',
+        title: 'BACKEND & APPLIED AI',
         description:
-          'Exploring infrastructure, automation, and modern engineering practices.',
-        skills: [
-          'Docker',
-          'CI/CD Pipelines',
-          'Deployment Workflows',
-          'System Design',
-        ],
-      },
-      {
-        period: '2025 – 2026',
-        title: 'BACKEND & SYSTEMS',
-        description:
-          'Focused on backend engineering, APIs, and scalable architecture.',
+          'Focused on backend engineering, scalable system architecture, infrastructure workflows, and practical AI integration.',
         skills: [
           'Node.js & Express',
-          'PostgreSQL & Prisma',
-          'Authentication & Authorization',
-          'REST APIs',
+          'PostgreSQL & Redis',
+          'Docker & CI/CD',
+          'System Design',
+          'Applied AI',
         ],
       },
       {
-        period: '2024 – 2025',
+        period: '2024 – 2026',
         title: 'FULL-STACK DEVELOPMENT',
         description:
-          'Expanded into full-stack development, building larger and more complex applications.',
+          'Expanded into full-stack development, building end-to-end web applications, REST APIs, and responsive interfaces.',
         skills: [
-          'React & TypeScript',
+          'React & Next.js',
+          'TypeScript',
           'MERN Applications',
+          'PostgreSQL & Prisma',
           'State Management',
-          'Responsive Interfaces',
         ],
       },
       {
@@ -325,7 +314,7 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
     ],
     metrics: {
       degree: 'B.Tech — CSE (AI & ML)',
-      status: 'Open to Internships',
+      status: 'Open to Work',
       projectsBuilt: '15+',
       yearsCoding: '3+',
     },
@@ -1287,7 +1276,6 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
     socialLinks: {
       github: 'https://github.com/Arjun586',
       linkedin: 'https://www.linkedin.com/in/arjun586',
-      x: 'https://x.com/Arjun88823705',
       leetcode: 'https://leetcode.com/u/arjun586/',
       email: 'mailto:arjunofficial586@gmail.com',
     },

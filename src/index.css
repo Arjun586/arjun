@@ -70,9 +70,59 @@
   animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Circular Reveal View Transition for Theme Switching */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+  animation: circularViewReveal 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes circularViewReveal {
+  from {
+    clip-path: circle(0px at var(--reveal-x, 95vw) var(--reveal-y, 28px));
+  }
+  to {
+    clip-path: circle(var(--reveal-r, 2200px) at var(--reveal-x, 95vw) var(--reveal-y, 28px));
+  }
+}
+
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+  transition-duration: 0s !important;
+}
+
+@keyframes circularFallbackReveal {
+  0% {
+    clip-path: circle(0px at var(--reveal-x, 95vw) var(--reveal-y, 28px));
+    opacity: 1;
+  }
+  75% {
+    clip-path: circle(var(--reveal-r, 2200px) at var(--reveal-x, 95vw) var(--reveal-y, 28px));
+    opacity: 1;
+  }
+  100% {
+    clip-path: circle(var(--reveal-r, 2200px) at var(--reveal-x, 95vw) var(--reveal-y, 28px));
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wire-line,
-  .animate-fade-up {
+  .animate-fade-up,
+  ::view-transition-new(root) {
     animation: none;
   }
 }
+

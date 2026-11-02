@@ -9,7 +9,7 @@ export const ExperienceSection: React.FC = () => {
       {/* Section Header */}
       <div className="flex items-center gap-4 font-mono text-xs text-espresso-muted dark:text-[#9A948D]">
         <span className="font-medium text-espresso-850 dark:text-[#EDEDEC]">
-          03. Work Experience, Growth Timeline & Exploration
+          05. Experience
         </span>
         <div className="h-px flex-1 bg-linen-border dark:bg-espresso-border" />
         <span className="tabular-nums">
@@ -92,7 +92,7 @@ export const ExperienceSection: React.FC = () => {
         {/* Experience Highlights */}
         <div className="p-5 bg-linen-50/70 dark:bg-espresso-850/70 border border-linen-border dark:border-espresso-border space-y-2.5">
           <div className="font-mono text-xs text-espresso-muted dark:text-[#9A948D]">
-            03.1 · Key Highlights
+            05.1 · Key Highlights
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {experience.highlights.map((highlight, idx) => (
@@ -121,7 +121,7 @@ export const ExperienceSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {experience.growthTimeline.map((stage) => (
             <div
               key={stage.period}

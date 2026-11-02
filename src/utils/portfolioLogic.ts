@@ -21,7 +21,7 @@ export function filterProjects(
   const normalizedQuery = options.searchQuery.trim().toLowerCase();
   const normalizedSkill = options.skillFilter?.trim().toLowerCase() || '';
 
-  return projects.filter((project) => {
+  const filtered = projects.filter((project) => {
     if (options.category === 'Featured' && !project.featured) {
       return false;
     } else if (
@@ -68,12 +68,20 @@ export function filterProjects(
 
     return searchableText.includes(normalizedQuery);
   });
+
+  if (options.category === 'All') {
+    return [...filtered].sort(
+      (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+    );
+  }
+
+  return filtered;
 }
 
 export interface ContactFormInput {
   name: string;
   email: string;
-  topic: string;
+  topic?: string;
   message: string;
 }
 
@@ -88,7 +96,6 @@ export function validateContactSubmission(
   const errors: Partial<Record<keyof ContactFormInput, string>> = {};
   const trimmedName = input.name.trim();
   const trimmedEmail = input.email.trim();
-  const trimmedTopic = input.topic.trim();
   const trimmedMessage = input.message.trim();
 
   if (trimmedName.length < 2) {
@@ -98,10 +105,6 @@ export function validateContactSubmission(
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(trimmedEmail)) {
     errors.email = 'Please provide a valid email address.';
-  }
-
-  if (!trimmedTopic) {
-    errors.topic = 'Please select an inquiry topic.';
   }
 
   if (trimmedMessage.length < 10) {
@@ -125,7 +128,7 @@ export function createContactRecord(
     id: `inq-${Date.now()}-${sequenceNumber}`,
     name: input.name.trim(),
     email: input.email.trim(),
-    topic: input.topic.trim(),
+    topic: (input.topic || 'General Inquiry').trim(),
     message: input.message.trim(),
     createdAt: 'Just now',
     referenceCode: code,
