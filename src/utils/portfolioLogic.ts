@@ -90,28 +90,57 @@ export interface ContactValidationResult {
   errors: Partial<Record<keyof ContactFormInput, string>>;
 }
 
+export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const MIN_NAME_LENGTH = 2;
+export const MIN_MESSAGE_LENGTH = 10;
+export const MAX_MESSAGE_LENGTH = 1000;
+
+export function validateContactField(
+  field: keyof ContactFormInput,
+  value: string
+): string | undefined {
+  const trimmed = value.trim();
+
+  if (field === 'name') {
+    if (trimmed.length < MIN_NAME_LENGTH) {
+      return 'Please enter your name (at least 2 characters).';
+    }
+    return undefined;
+  }
+
+  if (field === 'email') {
+    if (!EMAIL_REGEX.test(trimmed)) {
+      return 'Please provide a valid email address.';
+    }
+    return undefined;
+  }
+
+  if (field === 'message') {
+    if (trimmed.length < MIN_MESSAGE_LENGTH) {
+      return `Please include a short message (at least ${MIN_MESSAGE_LENGTH} characters).`;
+    }
+    if (trimmed.length > MAX_MESSAGE_LENGTH) {
+      return 'Message must be under 1,000 characters.';
+    }
+    return undefined;
+  }
+
+  return undefined;
+}
+
 export function validateContactSubmission(
   input: ContactFormInput
 ): ContactValidationResult {
   const errors: Partial<Record<keyof ContactFormInput, string>> = {};
-  const trimmedName = input.name.trim();
-  const trimmedEmail = input.email.trim();
-  const trimmedMessage = input.message.trim();
 
-  if (trimmedName.length < 2) {
-    errors.name = 'Please enter your name (at least 2 characters).';
-  }
+  const nameError = validateContactField('name', input.name);
+  if (nameError) errors.name = nameError;
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(trimmedEmail)) {
-    errors.email = 'Please provide a valid email address.';
-  }
+  const emailError = validateContactField('email', input.email);
+  if (emailError) errors.email = emailError;
 
-  if (trimmedMessage.length < 10) {
-    errors.message = 'Please include a short message (at least 10 characters).';
-  } else if (trimmedMessage.length > 1000) {
-    errors.message = 'Message must be under 1,000 characters.';
-  }
+  const messageError = validateContactField('message', input.message);
+  if (messageError) errors.message = messageError;
 
   return {
     valid: Object.keys(errors).length === 0,

@@ -10,6 +10,9 @@ import {
 import { PORTFOLIO_DATA, type ContactInquiry } from '../data/portfolioData';
 import {
   createContactRecord,
+  MAX_MESSAGE_LENGTH,
+  MIN_MESSAGE_LENGTH,
+  validateContactField,
   validateContactSubmission,
   type ContactFormInput,
 } from '../utils/portfolioLogic';
@@ -34,6 +37,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     email: '',
     message: '',
   });
+  const [touched, setTouched] = useState<
+    Partial<Record<keyof ContactFormInput, boolean>>
+  >({});
   const [errors, setErrors] = useState<
     Partial<Record<keyof ContactFormInput, string>>
   >({});
@@ -46,9 +52,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     value: string
   ) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
+    setTouched((prev) => ({ ...prev, [field]: true }));
+
+    // Real-time validation on every change
+    const fieldError = validateContactField(field, value);
+    setErrors((prev) => ({
+      ...prev,
+      [field]: fieldError,
+    }));
+
     if (submitError) {
       setSubmitError(null);
     }
@@ -57,10 +69,20 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     }
   };
 
+  const handleFieldBlur = (field: keyof ContactFormInput) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const fieldError = validateContactField(field, formState[field] || '');
+    setErrors((prev) => ({
+      ...prev,
+      [field]: fieldError,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
 
+    setTouched({ name: true, email: true, message: true });
     const validation = validateContactSubmission(formState);
     if (!validation.valid) {
       setErrors(validation.errors);
@@ -96,6 +118,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       onAddInquiry(newRecord);
       setSubmittedCode(newRecord.referenceCode);
       setErrors({});
+      setTouched({});
       setFormState({
         name: '',
         email: '',
@@ -109,6 +132,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       setIsSubmitting(false);
     }
   };
+
+  const trimmedMessageLength = formState.message.trim().length;
 
   return (
     <section id="contact" className="scroll-mt-16 pb-12">
@@ -153,12 +178,17 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 type="text"
                 value={formState.name}
                 onChange={(e) => handleFieldChange('name', e.target.value)}
+                onBlur={() => handleFieldBlur('name')}
                 placeholder="Enter your name"
                 aria-invalid={Boolean(errors.name)}
                 aria-describedby={
                   errors.name ? 'contact-name-error' : undefined
                 }
-                className="w-full px-3.5 py-2.5 bg-linen-100 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border text-espresso-850 dark:text-[#EDEDEC] text-sm font-sans focus:outline-none focus:border-espresso-850 dark:focus:border-white transition-colors"
+                className={`w-full px-3.5 py-2.5 bg-linen-100 dark:bg-espresso-900 border text-espresso-850 dark:text-[#EDEDEC] text-sm font-sans focus:outline-none transition-colors ${
+                  errors.name
+                    ? 'border-rose-600 dark:border-rose-400 focus:border-rose-600 dark:focus:border-rose-400'
+                    : 'border-linen-border dark:border-espresso-border focus:border-espresso-850 dark:focus:border-white'
+                }`}
               />
               {errors.name && (
                 <p
@@ -184,12 +214,17 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 type="email"
                 value={formState.email}
                 onChange={(e) => handleFieldChange('email', e.target.value)}
+                onBlur={() => handleFieldBlur('email')}
                 placeholder="you@example.com"
                 aria-invalid={Boolean(errors.email)}
                 aria-describedby={
                   errors.email ? 'contact-email-error' : undefined
                 }
-                className="w-full px-3.5 py-2.5 bg-linen-100 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border text-espresso-850 dark:text-[#EDEDEC] text-sm font-sans focus:outline-none focus:border-espresso-850 dark:focus:border-white transition-colors"
+                className={`w-full px-3.5 py-2.5 bg-linen-100 dark:bg-espresso-900 border text-espresso-850 dark:text-[#EDEDEC] text-sm font-sans focus:outline-none transition-colors ${
+                  errors.email
+                    ? 'border-rose-600 dark:border-rose-400 focus:border-rose-600 dark:focus:border-rose-400'
+                    : 'border-linen-border dark:border-espresso-border focus:border-espresso-850 dark:focus:border-white'
+                }`}
               />
               {errors.email && (
                 <p
@@ -211,8 +246,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 >
                   Project Scope or Message <span className="text-rose-600">*</span>
                 </label>
-                <span className="font-mono text-[11px] text-espresso-muted tabular-nums">
-                  {formState.message.length}/1000
+                <span
+                  className={`font-mono text-[11px] tabular-nums ${
+                    touched.message &&
+                    (trimmedMessageLength < MIN_MESSAGE_LENGTH ||
+                      trimmedMessageLength > MAX_MESSAGE_LENGTH)
+                      ? 'text-rose-600 dark:text-rose-400'
+                      : trimmedMessageLength >= MIN_MESSAGE_LENGTH
+                      ? 'text-emerald-700 dark:text-emerald-400'
+                      : 'text-espresso-muted'
+                  }`}
+                >
+                  {trimmedMessageLength}/{MAX_MESSAGE_LENGTH} (min {MIN_MESSAGE_LENGTH})
                 </span>
               </div>
               <textarea
@@ -220,12 +265,17 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 rows={4}
                 value={formState.message}
                 onChange={(e) => handleFieldChange('message', e.target.value)}
+                onBlur={() => handleFieldBlur('message')}
                 placeholder="Share details about your project or internship opportunity..."
                 aria-invalid={Boolean(errors.message)}
                 aria-describedby={
                   errors.message ? 'contact-msg-error' : undefined
                 }
-                className="w-full px-3.5 py-2.5 bg-linen-100 dark:bg-espresso-900 border border-linen-border dark:border-espresso-border text-espresso-850 dark:text-[#EDEDEC] text-sm font-sans focus:outline-none focus:border-espresso-850 dark:focus:border-white transition-colors resize-none"
+                className={`w-full px-3.5 py-2.5 bg-linen-100 dark:bg-espresso-900 border text-espresso-850 dark:text-[#EDEDEC] text-sm font-sans focus:outline-none transition-colors resize-none ${
+                  errors.message
+                    ? 'border-rose-600 dark:border-rose-400 focus:border-rose-600 dark:focus:border-rose-400'
+                    : 'border-linen-border dark:border-espresso-border focus:border-espresso-850 dark:focus:border-white'
+                }`}
               />
               {errors.message && (
                 <p
