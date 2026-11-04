@@ -287,24 +287,12 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
         description: 'Designing APIs and scalable services.',
       },
       {
-        area: 'Docker',
-        description: 'Containerization and development workflows.',
-      },
-      {
-        area: 'CI/CD',
-        description: 'Deployment automation and software delivery.',
-      },
-      {
         area: 'System Design',
         description: 'Learning how scalable systems are structured.',
       },
       {
         area: 'AI Applications',
         description: 'Exploring practical AI integration.',
-      },
-      {
-        area: 'Developer Tooling',
-        description: 'Improving workflows, tooling, and productivity.',
       },
     ],
     highlights: [
@@ -482,24 +470,22 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
         'Express',
         'Redis',
         'Docker',
-        'Jest',
-        'Lua',
       ],
       caseStudy: {
         brief:
-          'A production-grade, distributed rate-limiting engine implementing six distinct algorithmic strategies with Redis atomic operations and sub-millisecond evaluation latency.',
+          'A production-grade, distributed rate-limiting engine implementing six distinct algorithmic strategies with Redis persistence and sub-millisecond evaluation latency.',
         challenge:
           'Prevent distributed race conditions and memory bloat under high-concurrency burst traffic while maintaining sub-millisecond evaluation latency across distributed application instances.',
         approach: [
           {
             title: 'ALGORITHM SUITE',
             description:
-              'Implemented Fixed Window, Sliding Window Log, Sliding Window Counter, Token Bucket, Leaky Bucket, and Sliding Window Rate Limiting.',
+              'Implemented Fixed Window, Sliding Window Log, Sliding Window Counter, Token Bucket, Leaky Bucket (Counter), and Leaky Bucket (Queue).',
           },
           {
-            title: 'ATOMIC STATE EVALUATION',
+            title: 'EXPRESS MIDDLEWARE & FACTORY',
             description:
-              'Redis Lua scripting guarantees atomic get-check-increment-expire execution without client-side race conditions or distributed locking overhead.',
+              'Designed a pluggable Express middleware layer and factory pattern that instantiates any rate-limiting strategy dynamically with standardized X-RateLimit-* response headers.',
           },
           {
             title: 'ZERO-ALLOCATION MEMORY PROFILES',
@@ -508,12 +494,12 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
           },
         ],
         outcome:
-          'Deterministic traffic shaping across all 6 strategies with <1ms Redis round-trip overhead, zero-leak memory stability, and verified race condition immunity under concurrent thread simulation.',
+          'Deterministic traffic shaping across all 6 strategies with <1ms evaluation overhead, zero-leak memory stability, and clean middleware integration across Express API routes.',
         architecture:
-          'Modular middleware layer positioning algorithmic evaluators between the edge ingress and downstream business logic. Storage is abstracted between in-memory collections and distributed Redis clusters, orchestrating multi-key evaluations through single-roundtrip atomic Lua scripts.',
+          'Modular middleware layer positioning algorithmic evaluators between the edge ingress and downstream business logic. Storage is abstracted between custom in-memory data structures and distributed Redis stores, orchestrated through a unified Factory Pattern interface.',
         keyFocus: [
           '6 Core Rate Limiting Algorithms',
-          'Atomic Redis Lua Execution (No Race Conditions)',
+          'Express Middleware & Factory Pattern Architecture',
           'Memory Optimization (Singly Linked List vs Array.shift)',
           'Dynamic Header Injection (X-RateLimit-*)',
         ],
@@ -553,7 +539,7 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
                   'Smooth weighted approximation',
                   'O(1) - 2 integer counters',
                   'High (~99.5% accuracy)',
-                  'Multi-key Lua weighted sum',
+                  'Weighted window counters',
                   'High-volume standard API rate limiting',
                 ],
                 [
@@ -561,7 +547,7 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
                   'Permits controlled burst up to capacity',
                   'O(1) - Tokens + Last Timestamp',
                   'Continuous refill calculation',
-                  'Atomic Lua token decrement',
+                  'Continuous token refill & decrement',
                   'API gateways, burst-tolerant webhook tiers',
                 ],
                 [
@@ -569,7 +555,7 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
                   'Zero burst: Constant egress rate',
                   'O(Queue Size) - Buffer list',
                   'Constant output spacing',
-                  'Redis List (LPUSH + RPOP)',
+                  'FIFO Queue / Counter drain',
                   'Downstream database write smoothing',
                 ],
               ],
@@ -619,16 +605,16 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
             },
           },
           {
-            heading: 'ATOMIC DISTRIBUTED EXECUTION VIA REDIS LUA',
-            body: 'In distributed architectures with multiple API server instances, multi-step Redis interactions (GET current tokens -> evaluate limit in Node.js -> SET updated tokens) suffer critical race conditions. Two concurrent requests arriving at separate servers both read token_count = 1, both approve the request, and decrement the counter, allowing clients to breach their strict limit. The engine encapsulates state evaluation inside atomic Redis Lua scripts.',
+            heading: 'FACTORY PATTERN & EXPRESS MIDDLEWARE PIPELINE',
+            body: 'To keep application routes decoupled from specific rate-limiting implementations, the engine exposes a unified RateLimiterFactory and Express middleware adapter. Any of the six algorithms can be swapped via configuration while automatically injecting RFC-compliant rate-limit headers.',
             diagram: {
-              caption: 'DISTRIBUTED RACE CONDITION VS LUA ATOMICITY',
+              caption: 'EXPRESS MIDDLEWARE & FACTORY DISPATCH FLOW',
               ascii:
-                'RACE CONDITION (MULTI-STEP NODE.JS ROUNDTRIPS):\nInstance 1: ─── GET count (99) ──▶ [Safe] ─────────────── SET count (100) ──▶ ALLOW (100th)\nInstance 2: ─────── GET count (99) ──▶ [Safe] ─────────────── SET count (100) ──▶ ALLOW (101st - LEAK!)\n\nATOMIC REDIS LUA EXECUTION (EVALSHA):\nInstance 1: ─── EVALSHA script ──▶ [ATOMIC EXECUTE: Check & Incr] ──▶ ALLOW (100th)\nInstance 2: ─── EVALSHA script ─────────▶ [ATOMIC EXECUTE: Check Limit] ──▶ REJECT 429 (BLOCKED)',
+                'HTTP Request ──▶ [Express RateLimit Middleware] ──▶ [RateLimiterFactory.create(strategy)]\n                                                               │\n       ┌───────────────────────────────────────────────────────┴──────────────────────┐\n       ▼                                                       ▼                      ▼\n[Token Bucket]                                       [Sliding Window Log]    [Sliding Counter]\n       │                                                       │                      │\n       └───────────────────────┬───────────────────────────────┴──────────────────────┘\n                               ▼\n              [Allowed: Inject X-RateLimit-* & next()]  OR  [Blocked: HTTP 429 Too Many Requests]',
             },
             codeSnippet: {
-              language: 'lua',
-              code: "-- Sliding Window Counter: Atomic Redis Lua Evaluation\nlocal key = KEYS[1]\nlocal now = tonumber(ARGV[1])\nlocal window = tonumber(ARGV[2])\nlocal limit = tonumber(ARGV[3])\n\nlocal clear_before = now - window\nredis.call('ZREMRANGEBYSCORE', key, 0, clear_before)\n\nlocal current_requests = redis.call('ZCARD', key)\nif current_requests < limit then\n    redis.call('ZADD', key, now, now)\n    redis.call('EXPIRE', key, math.ceil(window / 1000))\n    return { 1, limit - current_requests - 1 } -- 1 = ALLOWED, remaining\nelse\n    return { 0, 0 } -- 0 = REJECTED (HTTP 429)\nend",
+              language: 'typescript',
+              code: '// Express Middleware with Strategy Factory Pattern\nexport function createRateLimitMiddleware(config: RateLimitConfig) {\n  const limiter = RateLimiterFactory.create(config.algorithm, config);\n\n  return async (req: Request, res: Response, next: NextFunction) => {\n    const clientKey = config.keyGenerator ? config.keyGenerator(req) : req.ip;\n    const result = await limiter.consume(clientKey);\n\n    res.setHeader("X-RateLimit-Limit", config.limit);\n    res.setHeader("X-RateLimit-Remaining", Math.max(0, result.remaining));\n\n    if (!result.allowed) {\n      res.setHeader("Retry-After", Math.ceil(result.retryAfterMs / 1000));\n      return res.status(429).json({ error: "Too Many Requests" });\n    }\n\n    return next();\n  };\n}',
             },
           },
         ],
@@ -778,7 +764,6 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
         'PostgreSQL',
         'Elasticsearch',
         'Docker',
-        'Kibana',
       ],
       caseStudy: {
         brief:
@@ -1240,13 +1225,19 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
       ],
       'Infrastructure & Systems': [
         'Docker',
-        'GitHub Actions',
-        'AWS',
         'Firebase',
         'Vercel',
         'Netlify',
         'Railway',
         'Render',
+      ],
+      'AI Tooling': [
+        'Cursor',
+        'Claude Code',
+        'GitHub Copilot',
+        'Gemini API',
+        'OpenAI API',
+        'Prompt Engineering',
       ],
       'Tools & Platforms': ['Git', 'GitHub', 'VS Code', 'Postman'],
     },

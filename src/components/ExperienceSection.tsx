@@ -13,7 +13,7 @@ export const ExperienceSection: React.FC = () => {
         </span>
         <div className="h-px flex-1 bg-linen-border dark:bg-espresso-border" />
         <span className="tabular-nums">
-          {experience.workExperience.length} Role · {experience.growthTimeline.length} Growth Stages
+          {experience.workExperience.length} Role · {experience.currentlyExploring.length} Exploring Areas
         </span>
       </div>
 
@@ -110,62 +110,14 @@ export const ExperienceSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Part 2: Growth Timeline (2023 – Present) */}
-      <div className="space-y-6">
-        <div>
-          <h3 className="font-editorial text-2xl sm:text-3xl text-espresso-850 dark:text-[#EDEDEC]">
-            Engineering Growth Timeline
-          </h3>
-          <p className="font-sans text-sm text-espresso-muted dark:text-[#9A948D] mt-1">
-            Progression from core web foundations to full-stack applications, backend systems, and infrastructure.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {experience.growthTimeline.map((stage) => (
-            <div
-              key={stage.period}
-              className="p-5 border border-linen-border dark:border-espresso-border bg-linen-50/60 dark:bg-espresso-850/60 flex flex-col justify-between space-y-4"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between font-mono text-xs text-espresso-muted dark:text-[#9A948D] tabular-nums">
-                  <span>{stage.period}</span>
-                </div>
-                <h4 className="font-mono text-sm font-semibold text-espresso-850 dark:text-[#EDEDEC]">
-                  {stage.title}
-                </h4>
-                <p className="font-sans text-xs sm:text-sm text-espresso-850/85 dark:text-[#C4BEB7] leading-relaxed">
-                  {stage.description}
-                </p>
-              </div>
-
-              <div className="pt-3 border-t border-linen-border/70 dark:border-espresso-border flex flex-wrap items-center gap-y-1 font-mono text-xs text-espresso-muted dark:text-[#9A948D]">
-                {stage.skills.map((skill, idx) => (
-                  <React.Fragment key={skill}>
-                    {idx > 0 && (
-                      <span aria-hidden="true" className="mx-2">
-                        ·
-                      </span>
-                    )}
-                    <span className="text-espresso-850 dark:text-[#EDEDEC] whitespace-nowrap">
-                      {skill}
-                    </span>
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Part 3: Currently Exploring */}
+      {/* Part 2: Currently Exploring */}
       <div className="space-y-6">
         <div>
           <h3 className="font-editorial text-2xl sm:text-3xl text-espresso-850 dark:text-[#EDEDEC]">
             Currently Exploring
           </h3>
           <p className="font-sans text-sm text-espresso-muted dark:text-[#9A948D] mt-1">
-            Active areas of study across backend architecture, containerization, and developer tooling.
+            Active areas of study across backend architecture, scalable system design, and applied AI.
           </p>
         </div>
 

@@ -37,6 +37,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const [errors, setErrors] = useState<
     Partial<Record<keyof ContactFormInput, string>>
   >({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [submittedCode, setSubmittedCode] = useState<string | null>(null);
 
   const handleFieldChange = (
@@ -47,13 +49,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
+    if (submitError) {
+      setSubmitError(null);
+    }
     if (submittedCode) {
       setSubmittedCode(null);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     const validation = validateContactSubmission(formState);
     if (!validation.valid) {
       setErrors(validation.errors);
@@ -61,14 +68,46 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     }
 
     const newRecord = createContactRecord(formState, inquiries.length + 1);
-    onAddInquiry(newRecord);
-    setSubmittedCode(newRecord.referenceCode);
-    setErrors({});
-    setFormState({
-      name: '',
-      email: '',
-      message: '',
-    });
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: newRecord.name,
+          email: newRecord.email,
+          message: newRecord.message,
+          referenceCode: newRecord.referenceCode,
+        }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || result.ok === false) {
+        throw new Error(
+          result.error || 'Could not send email right now. Please try again.'
+        );
+      }
+
+      onAddInquiry(newRecord);
+      setSubmittedCode(newRecord.referenceCode);
+      setErrors({});
+      setFormState({
+        name: '',
+        email: '',
+        message: '',
+      });
+    } catch (err: any) {
+      setSubmitError(
+        err?.message || 'Failed to send message. Please try again or email directly.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -200,23 +239,35 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             </div>
 
             {/* Submit Button & Confirmation */}
-            <div className="pt-2 flex flex-wrap items-center justify-between gap-4">
-              <button
-                type="submit"
-                className="inline-flex items-center gap-2 px-6 py-3 font-mono text-xs font-semibold bg-espresso-850 text-linen-50 dark:bg-[#EDEDEC] dark:text-espresso-950 hover:opacity-90 transition-opacity border border-espresso-850 dark:border-white whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>Send Message</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-
-              {submittedCode && (
-                <div
-                  role="status"
-                  className="font-mono text-xs text-emerald-700 dark:text-emerald-400 font-medium"
+            <div className="pt-2 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex items-center gap-2 px-6 py-3 font-mono text-xs font-semibold bg-espresso-850 text-linen-50 dark:bg-[#EDEDEC] dark:text-espresso-950 hover:opacity-90 disabled:opacity-50 transition-opacity border border-espresso-850 dark:border-white whitespace-nowrap shrink-0 cursor-pointer disabled:cursor-not-allowed"
                 >
-                  ✓ Message sent ({submittedCode})
-                </div>
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+
+                {submittedCode && (
+                  <div
+                    role="status"
+                    className="font-mono text-xs text-emerald-700 dark:text-emerald-400 font-medium"
+                  >
+                    ✓ Delivered to {contact.email} ({submittedCode})
+                  </div>
+                )}
+              </div>
+
+              {submitError && (
+                <p
+                  role="alert"
+                  className="font-mono text-xs text-rose-600 dark:text-rose-400"
+                >
+                  {submitError}
+                </p>
               )}
             </div>
           </form>
