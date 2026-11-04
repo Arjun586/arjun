@@ -101,53 +101,28 @@ export default async function handler(req: any, res: any) {
 
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
-    const safeRef = escapeHtml(referenceCode);
     const safeMessage = escapeHtml(message).replace(/\n/g, '<br />');
 
     const { data, error } = await resend.emails.send({
       from: fromEmail,
       to: [RECIPIENT_EMAIL],
       replyTo: email,
-      subject: `[Portfolio Inquiry ${referenceCode}] New message from ${name}`,
+      subject: `[Portfolio Contact] New message from ${name}`,
       text: [
-        `New Portfolio Contact Inquiry (${referenceCode})`,
-        `----------------------------------------`,
-        `From: ${name}`,
+        'New portfolio contact form submission',
+        '',
+        `Name: ${name}`,
         `Email: ${email}`,
-        `Recipient: ${RECIPIENT_EMAIL}`,
-        ``,
-        `Message:`,
+        '',
+        'Message:',
         message,
       ].join('\n'),
       html: `
-        <div style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #161514; color: #EDEDEC; border: 1px solid #2A2826;">
-          <div style="font-size: 12px; color: #9A948D; margin-bottom: 16px; border-bottom: 1px solid #2A2826; padding-bottom: 12px;">
-            PORTFOLIO INQUIRY · ${safeRef}
-          </div>
-          <h2 style="font-family: Georgia, serif; font-size: 22px; color: #EDEDEC; margin: 0 0 16px 0;">
-            New Message from ${safeName}
-          </h2>
-          <table style="width: 100%; font-size: 13px; margin-bottom: 20px; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 6px 0; color: #9A948D; width: 100px;">Sender:</td>
-              <td style="padding: 6px 0; color: #EDEDEC; font-weight: 600;">${safeName}</td>
-            </tr>
-            <tr>
-              <td style="padding: 6px 0; color: #9A948D;">Reply-To:</td>
-              <td style="padding: 6px 0;"><a href="mailto:${safeEmail}" style="color: #34D399; text-decoration: underline;">${safeEmail}</a></td>
-            </tr>
-            <tr>
-              <td style="padding: 6px 0; color: #9A948D;">Reference:</td>
-              <td style="padding: 6px 0; color: #EDEDEC;">${safeRef}</td>
-            </tr>
-          </table>
-          <div style="padding: 16px; background-color: #1E1C1A; border: 1px solid #2A2826; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 1.6; color: #D1CBC5;">
-            ${safeMessage}
-          </div>
-          <div style="margin-top: 20px; font-size: 11px; color: #9A948D;">
-            Sent via Resend from Arjun's Portfolio Contact Form to ${RECIPIENT_EMAIL}. Reply directly to this email to respond to ${safeName}.
-          </div>
-        </div>
+        <h2>New portfolio contact form submission</h2>
+        <p><strong>Name:</strong> ${safeName}</p>
+        <p><strong>Email:</strong> ${safeEmail}</p>
+        <p><strong>Message:</strong></p>
+        <p>${safeMessage}</p>
       `,
     });
 
