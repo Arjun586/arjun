@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="12" fill="#161514" />
+  <rect x="3" y="3" width="58" height="58" rx="9" stroke="#2E2B28" stroke-width="2" />
+  <!-- Editorial Monogram "A" -->
+  <path
+    d="M32 14L17 48H23.5L26.8 40H37.2L40.5 48H47L32 14ZM29.2 34L32 27.1L34.8 34H29.2Z"
+    fill="#EDEDEC"
+  />
+  <!-- Terminal / Systems Accent Dot -->
+  <circle cx="49" cy="15" r="4" fill="#34D399" />
+</svg>
