@@ -1277,9 +1277,9 @@ export const PORTFOLIO_DATA: PortfolioSourceData = {
     ],
     resume: {
       viewUrl:
-        'https://drive.google.com/file/d/1ZTRCNI2AbiEtc9mLi3OsoaTZa43eXkPk/view?usp=sharing',
+        'https://drive.google.com/file/d/1aXtavtpB3JTrM8ZWz32_XYXk_wWARHXp/view?usp=sharing',
       downloadUrl:
-        'https://drive.google.com/uc?export=download&id=1ZTRCNI2AbiEtc9mLi3OsoaTZa43eXkPk',
+        'https://drive.google.com/uc?export=download&id=1aXtavtpB3JTrM8ZWz32_XYXk_wWARHXp',
     },
     collaborationCta: {
       title: "LET'S WORK TOGETHER",
