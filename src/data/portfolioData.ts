@@ -15,6 +15,7 @@ export interface PersonalData {
   location: string;
   availability: string;
   heroBio: string;
+  overviewBio: string[];
   aboutBio: string[];
   currentFocus: string[];
   quotes: QuoteItem[];
@@ -175,20 +176,28 @@ export interface PortfolioSourceData {
 export const PORTFOLIO_DATA: PortfolioSourceData = {
   personal: {
     name: 'Arjun',
-    title: 'Full Stack Developer',
-    discipline: 'CSE Student • Full-Stack Development & Backend Systems',
+    title: 'Software Engineer',
+    discipline:
+      'Software Engineer • Backend Systems, Distributed Architectures & Applied AI',
     location: 'India',
     availability: 'Open to Work',
-    heroBio: 'Building software with clarity, purpose, and craft.',
+    heroBio: 'Designing scalable backend systems and applied AI architectures.',
+    overviewBio: [
+      'I approach software engineering with a focus on clarity, usability, and attention to detail. Whether designing backend systems or building full-stack applications, I value purposeful design and thoughtful execution.',
+      'Focused on strong computer science fundamentals, clean system design, and integrating Large Language Models into practical, production-ready software.',
+    ],
     aboutBio: [
-      'I approach software development with a focus on clarity, usability, and attention to detail. Whether building backend systems or refining user experiences, I value purposeful design and thoughtful execution.',
-      "I'm a Computer Science student focused on backend and full-stack development. I enjoy building applications beyond the interface — working with APIs, databases, authentication, caching, and the infrastructure that connects everything together.",
-      "I'm currently focused on writing more reliable software, improving my understanding of system design, and getting better at testing and deployment.",
+      "I'm a Software Engineer passionate about understanding how software systems work, designing scalable architectures, and exploring the possibilities of AI.",
+      'My primary interests include Backend Engineering, Distributed Systems, System Design, and Applied AI.',
+      'I enjoy working with technologies like TypeScript, Node.js, PostgreSQL, MongoDB, Redis, and Docker, while exploring how Large Language Models can be integrated into real-world applications.',
+      "Currently, I'm deepening my understanding of backend systems and system design while learning to build with Generative AI and LLMs.",
+      'I believe in understanding the fundamentals, making thoughtful engineering decisions, and building things that solve real-world problems.',
     ],
     currentFocus: [
       'Backend Engineering',
-      'Full-Stack Development',
-      'Systems & Infrastructure',
+      'Distributed Systems',
+      'System Design',
+      'Applied AI',
     ],
     quotes: [
       {

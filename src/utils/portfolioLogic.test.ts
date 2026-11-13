@@ -95,3 +95,27 @@ test('createContactRecord generates trimmed inquiry with sequential reference co
   assert.equal(record.referenceCode, 'INQ-101');
   assert.equal(record.createdAt, 'Just now');
 });
+
+test('personal data contains updated Overview and About copy and focus areas', () => {
+  const { personal } = PORTFOLIO_DATA;
+  assert.equal(personal.title, 'Software Engineer');
+  assert.equal(
+    personal.heroBio,
+    'Designing scalable backend systems and applied AI architectures.'
+  );
+  assert.equal(personal.overviewBio.length, 2);
+  assert.ok(
+    personal.overviewBio[0].startsWith(
+      'I approach software engineering with a focus on clarity'
+    )
+  );
+  assert.equal(personal.aboutBio.length, 5);
+  assert.ok(personal.aboutBio[0].startsWith("I'm a Software Engineer passionate"));
+  assert.deepEqual(personal.currentFocus, [
+    'Backend Engineering',
+    'Distributed Systems',
+    'System Design',
+    'Applied AI',
+  ]);
+});
+

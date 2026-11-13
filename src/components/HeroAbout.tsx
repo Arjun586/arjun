@@ -101,9 +101,9 @@ export const HeroAbout: React.FC<HeroAboutProps> = ({
               </h1>
             </div>
 
-            {/* About Bio Paragraphs */}
+            {/* Overview Lead Paragraphs */}
             <div className="space-y-3.5 text-espresso-850/85 dark:text-[#D1CBC5] text-sm sm:text-base leading-relaxed font-sans max-w-[68ch]">
-              {personal.aboutBio.map((paragraph, idx) => (
+              {personal.overviewBio.map((paragraph, idx) => (
                 <p key={idx}>{paragraph}</p>
               ))}
             </div>
@@ -223,20 +223,33 @@ export const HeroAbout: React.FC<HeroAboutProps> = ({
       </section>
 
       {/* 02. About Section */}
-      <section id="about" className="scroll-mt-16 space-y-8">
+      <section id="about" className="scroll-mt-16 space-y-6">
         <div className="flex items-center gap-4 font-mono text-xs text-espresso-muted dark:text-[#9A948D]">
           <span className="font-medium text-espresso-850 dark:text-[#EDEDEC]">
             02. About
           </span>
           <div className="h-px flex-1 bg-linen-border dark:bg-espresso-border" />
-          <span className="tabular-nums">Focus, Education & Interests</span>
+          <span className="tabular-nums">Narrative, Focus & Education</span>
+        </div>
+
+        {/* 02.1 Engineering Narrative */}
+        <div className="p-6 sm:p-8 bg-linen-50/80 dark:bg-espresso-850/80 border border-linen-border dark:border-espresso-border space-y-4">
+          <div className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] flex items-center justify-between">
+            <span>02.1 · Engineering Narrative</span>
+            <span>{personal.title}</span>
+          </div>
+          <div className="space-y-3.5 text-espresso-850/90 dark:text-[#D1CBC5] text-sm sm:text-base leading-relaxed font-sans max-w-[72ch]">
+            {personal.aboutBio.map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
+          </div>
         </div>
 
         {/* Current Focus & Education Matrix */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-6 p-6 bg-linen-50/80 dark:bg-espresso-850/80 border border-linen-border dark:border-espresso-border flex flex-col justify-between space-y-3">
             <span className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] block">
-              02.1 · Current Focus
+              02.2 · Current Focus
             </span>
             <div className="font-sans text-base text-espresso-850 dark:text-[#EDEDEC] font-medium leading-snug">
               {personal.currentFocus.map((item, idx) => (
@@ -257,7 +270,7 @@ export const HeroAbout: React.FC<HeroAboutProps> = ({
 
           <div className="lg:col-span-6 p-6 bg-linen-50/80 dark:bg-espresso-850/80 border border-linen-border dark:border-espresso-border flex flex-col justify-between space-y-2">
             <span className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] block">
-              02.2 · Education ({education.period})
+              02.3 · Education ({education.period})
             </span>
             <p className="font-sans text-base text-espresso-850 dark:text-[#EDEDEC] font-semibold leading-snug">
               {education.degree} — {education.institution}
@@ -272,7 +285,7 @@ export const HeroAbout: React.FC<HeroAboutProps> = ({
         <div className="p-6 border border-linen-border dark:border-espresso-border bg-linen-50/60 dark:bg-espresso-850/60 flex flex-col justify-between space-y-4">
           <div className="space-y-2">
             <div className="font-mono text-xs text-espresso-muted dark:text-[#9A948D] flex items-center justify-between">
-              <span>02.3 · Beyond Development & Interests</span>
+              <span>02.4 · Beyond Development & Interests</span>
               <BookOpen className="w-3.5 h-3.5" />
             </div>
             <p className="font-sans text-sm text-espresso-850/90 dark:text-[#D1CBC5] leading-relaxed">
